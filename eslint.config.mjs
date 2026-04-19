@@ -1,18 +1,26 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import nextConfig from "eslint-config-next";
+import tanstackQuery from "@tanstack/eslint-plugin-query";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
+const eslintConfig = [
+  ...nextConfig,
+  ...tanstackQuery.configs["flat/recommended"],
+  {
+    rules: {
+      "@tanstack/query/exhaustive-deps": "error",
+      "@tanstack/query/stable-query-client": "error",
+      "@tanstack/query/no-rest-destructuring": "warn",
+      "@tanstack/query/no-unstable-deps": "warn",
+    },
+  },
+  {
+    ignores: [
+      "**/node_modules/**",
+      "**/public/**",
+      "**/dist/**",
+      ".next/**",
+      "out/**",
+    ],
+  },
+];
 
 export default eslintConfig;

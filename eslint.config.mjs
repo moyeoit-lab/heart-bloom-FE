@@ -1,18 +1,44 @@
-import { defineConfig, globalIgnores } from "eslint/config";
-import nextVitals from "eslint-config-next/core-web-vitals";
-import nextTs from "eslint-config-next/typescript";
+import { FlatCompat } from "@eslint/eslintrc";
+import pluginNext from "@next/eslint-plugin-next";
+import storybook from "eslint-plugin-storybook";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 
-const eslintConfig = defineConfig([
-  ...nextVitals,
-  ...nextTs,
-  // Override default ignores of eslint-config-next.
-  globalIgnores([
-    // Default ignores of eslint-config-next:
-    ".next/**",
-    "out/**",
-    "build/**",
-    "next-env.d.ts",
-  ]),
-]);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+const compat = new FlatCompat({
+  baseDirectory: __dirname,
+});
+
+const eslintConfig = [
+  ...compat.config({
+    plugins: ["@next/next", "@tanstack/query"],
+    extends: [
+      "next/core-web-vitals",
+      "next/typescript",
+      "prettier",
+      "plugin:@tanstack/query/recommended",
+      "plugin:storybook/recommended",
+    ],
+    rules: {
+      ...pluginNext.configs.recommended.rules,
+      "@tanstack/query/exhaustive-deps": "error",
+      "@tanstack/query/stable-query-client": "error",
+      "@tanstack/query/no-rest-destructuring": "warn",
+      "@tanstack/query/no-unstable-deps": "warn",
+    },
+    ignorePatterns: [
+      "**/node_modules/**",
+      "**/public/**",
+      "**/dist/**",
+      ".next/**",
+      "out/**",
+      "storybook-static/**",
+      ".pnpm-lock.yaml",
+    ],
+  }),
+  ...storybook.configs["flat/recommended"],
+];
 
 export default eslintConfig;

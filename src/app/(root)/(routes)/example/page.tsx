@@ -1,4 +1,6 @@
 import { Button } from "@/components/Button";
+import { Switch } from "@/components/Switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 
 export default function ExamplePage() {
   return (
@@ -33,6 +35,32 @@ export default function ExamplePage() {
         <div className="flex items-center gap-3">
           <Button variant="kakao">카카오로 계속하기</Button>
         </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Switch</h2>
+        <div className="flex items-center gap-3">
+          <Switch />
+          <Switch defaultChecked />
+          <Switch disabled />
+          <Switch defaultChecked disabled />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Tabs</h2>
+        <Tabs defaultValue="left" className="w-[224.667px]">
+          <TabsList>
+            <TabsTrigger value="left">텍스트</TabsTrigger>
+            <TabsTrigger value="right">텍스트</TabsTrigger>
+          </TabsList>
+          <TabsContent value="left" className="typo-body-2 text-gray-600">
+            첫 번째 탭 내용
+          </TabsContent>
+          <TabsContent value="right" className="typo-body-2 text-gray-600">
+            두 번째 탭 내용
+          </TabsContent>
+        </Tabs>
       </section>
     </main>
   );

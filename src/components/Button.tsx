@@ -19,9 +19,15 @@ const buttonVariants = cva(
   },
 );
 
-type ButtonProps = ComponentProps<"button"> & VariantProps<typeof buttonVariants>;
+type ButtonProps = ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants>;
 
-function Button({ className, variant, type = "button", ...props }: ButtonProps) {
+function Button({
+  className,
+  variant,
+  type = "button",
+  ...props
+}: ButtonProps) {
   return (
     <button
       type={type}

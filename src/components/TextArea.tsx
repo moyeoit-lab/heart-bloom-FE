@@ -9,7 +9,7 @@ const DEFAULT_MAX_LENGTH = 2000;
 const DEFAULT_ROWS = 8;
 
 const textAreaVariants = cva(
-  "flex w-full flex-col gap-3 rounded-xl border border-gray-100 bg-white p-3 transition-colors focus-within:border-green-400",
+  "flex w-full flex-col gap-3 rounded-[12px] border border-gray-100 bg-white p-3 transition-colors focus-within:border-green-400",
 );
 
 type TextAreaProps = ComponentProps<"textarea"> & {

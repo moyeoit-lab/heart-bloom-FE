@@ -2,6 +2,7 @@ import { Button } from "@/components/Button";
 import { Switch } from "@/components/Switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { TextArea } from "@/components/TextArea";
+import { TextInput } from "@/components/TextInput";
 
 export default function ExamplePage() {
   return (
@@ -45,6 +46,22 @@ export default function ExamplePage() {
           <Switch defaultChecked />
           <Switch disabled />
           <Switch defaultChecked disabled />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">TextInput</h2>
+        <div className="flex w-[326px] flex-col gap-6">
+          <TextInput
+            label="제목 텍스트"
+            placeholder="텍스트"
+            helperText="보조 텍스트"
+          />
+          <TextInput
+            label="제목 텍스트"
+            defaultValue="텍스트"
+            helperText="보조 텍스트"
+          />
         </div>
       </section>
 

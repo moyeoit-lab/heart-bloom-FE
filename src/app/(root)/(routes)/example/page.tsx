@@ -1,8 +1,13 @@
+"use client";
+
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/Switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
 import { TextArea } from "@/components/TextArea";
 import { TextInput } from "@/components/TextInput";
+import { toast } from "@/components/Toast";
+
+const TOAST_DEMO_MESSAGE = "메시지에 마침표를 찍어요.";
 
 export default function ExamplePage() {
   return (
@@ -71,6 +76,13 @@ export default function ExamplePage() {
           <TextArea placeholder="작은 거여도 괜찮아요, 생각나는 대로 적어보세요." />
           <TextArea defaultValue="입력된 내용" />
         </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Toast</h2>
+        <Button onClick={() => toast(TOAST_DEMO_MESSAGE)}>
+          토스트 띄우기
+        </Button>
       </section>
 
       <section className="flex flex-col gap-4">

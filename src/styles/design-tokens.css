@@ -1,0 +1,98 @@
+@theme inline {
+  /* ── Fonts ── */
+  --font-kimm: "KIMM", system-ui, sans-serif;
+  --font-paperlogy:
+    "Paperlogy", system-ui, -apple-system, Segoe UI, Roboto, Noto Sans, Ubuntu,
+    Cantarell, Helvetica Neue, Arial, sans-serif;
+
+  /* ── Typography (font-size) ── */
+  --text-headline: 3.25rem; /* 52px */
+  --text-main-title: 2rem; /* 32px */
+  --text-title-1: 1.5rem; /* 24px */
+  --text-title-2: 1.375rem; /* 22px */
+  --text-title-3: 1.25rem; /* 20px */
+  --text-body-1: 1.125rem; /* 18px */
+  --text-body-2: 1rem; /* 16px */
+  --text-body-3: 0.9375rem; /* 15px */
+  --text-body-4: 0.75rem; /* 12px */
+  --text-button: 0.875rem; /* 14px */
+  --text-caption-1: 0.8125rem; /* 13px */
+  --text-caption-2: 0.6875rem; /* 11px */
+  --text-caption-3: 0.5625rem; /* 9px */
+
+  /* ── Red ── */
+  --color-red-050: #fff5f7;
+  --color-red-100: #fed8e1;
+  --color-red-200: #f9b3c6;
+  --color-red-300: #ed83a3;
+  --color-red-400: #dd7494;
+  --color-red-500: #bd5376;
+  --color-red-600: #a2365d;
+  --color-red-700: #8d224c;
+  --color-red-800: #750239;
+  --color-red-900: #540020;
+
+  /* ── Violet ── */
+  --color-violet-050: #fdf4f8;
+  --color-violet-100: #f8d9e8;
+  --color-violet-200: #eab8d1;
+  --color-violet-300: #c895af;
+  --color-violet-400: #b986a0;
+  --color-violet-500: #996881;
+  --color-violet-600: #7f4f69;
+  --color-violet-700: #6c3e57;
+  --color-violet-800: #562b43;
+  --color-violet-900: #411830;
+
+  /* ── Green ── */
+  --color-green-050: #f2f8f4;
+  --color-green-100: #d2e7d9;
+  --color-green-200: #a7d0b5;
+  --color-green-300: #6cb287;
+  --color-green-400: #56a476;
+  --color-green-500: #2f8657;
+  --color-green-600: #006c3e;
+  --color-green-700: #00592c;
+  --color-green-800: #004318;
+  --color-green-900: #002e04;
+
+  /* ── Gray ── */
+  --color-gray-050: #f7f7f7;
+  --color-gray-100: #e1e1e1;
+  --color-gray-200: #c6c6c6;
+  --color-gray-300: #a3a3a3;
+  --color-gray-400: #959595;
+  --color-gray-500: #767676;
+  --color-gray-600: #5d5d5d;
+  --color-gray-700: #4c4c4c;
+  --color-gray-800: #393939;
+  --color-gray-900: #262626;
+
+  /* ── Brown ── */
+  --color-brown-050: #cdc5c5;
+  --color-brown-100: #a48f8f;
+  --color-brown-200: #5f4444;
+  --color-brown-300: #473333;
+  --color-brown-400: #392929;
+  --color-brown-500: #2b1f1f;
+  --color-brown-600: #211818;
+
+  /* ── Point ── */
+  --color-point-yellow: #f8b500;
+  --color-point-blue: #347fe6;
+  --color-point-red: #dd424c;
+
+  /* ── Base ── */
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  /* ── Radius ── */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --radius: 0.625rem;
+}

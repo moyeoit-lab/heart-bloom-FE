@@ -1,0 +1,71 @@
+@utility typo-headline {
+  font-size: var(--text-headline);
+  line-height: normal;
+  font-weight: 300;
+}
+
+@utility typo-title-1 {
+  font-size: var(--text-main-title);
+  line-height: 40px;
+  font-weight: 600;
+}
+
+@utility typo-title-2 {
+  font-size: var(--text-title-1);
+  line-height: 40px;
+  font-weight: 600;
+}
+
+@utility typo-title-3 {
+  font-size: var(--text-title-2);
+  line-height: 30px;
+  font-weight: 600;
+}
+
+@utility typo-subtitle {
+  font-size: var(--text-body-1);
+  line-height: normal;
+  font-weight: 300;
+}
+
+@utility typo-body-1 {
+  font-size: var(--text-body-2);
+  line-height: 24px;
+  font-weight: 400;
+}
+
+@utility typo-body-2 {
+  font-size: var(--text-body-3);
+  line-height: 24px;
+  font-weight: 400;
+}
+
+@utility typo-body-2-1 {
+  font-size: var(--text-body-3);
+  line-height: 24px;
+  font-weight: 500;
+}
+
+@utility typo-body-2-2 {
+  font-size: var(--text-body-3);
+  line-height: 24px;
+  font-weight: 700;
+}
+
+@utility typo-body-3 {
+  font-size: var(--text-button);
+  line-height: 22px;
+  font-weight: 400;
+}
+
+@utility typo-caption-1 {
+  font-size: var(--text-caption-1);
+  line-height: 22px;
+  font-weight: 400;
+}
+
+@utility typo-caption-2 {
+  font-size: var(--text-body-4);
+  line-height: 20px;
+  font-weight: 400;
+}

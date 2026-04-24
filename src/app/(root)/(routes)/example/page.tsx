@@ -1,0 +1,105 @@
+"use client";
+
+import { Button } from "@/components/Button";
+import { Switch } from "@/components/Switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/Tabs";
+import { TextArea } from "@/components/TextArea";
+import { TextInput } from "@/components/TextInput";
+import { toast } from "@/components/Toast";
+
+const TOAST_DEMO_MESSAGE = "메시지에 마침표를 찍어요.";
+
+export default function ExamplePage() {
+  return (
+    <main className="mx-auto flex max-w-[720px] flex-col gap-12 p-10">
+      <header>
+        <h1 className="typo-title-1">공용 컴포넌트 예시</h1>
+        <p className="typo-body-2 mt-2 text-gray-500">
+          pressed 상태는 직접 눌러서 확인하세요.
+        </p>
+      </header>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Button — Solid</h2>
+        <div className="flex items-center gap-3">
+          <Button>텍스트</Button>
+          <Button disabled>텍스트</Button>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Button — Outlined</h2>
+        <div className="flex items-center gap-3">
+          <Button variant="outlined">텍스트</Button>
+          <Button variant="outlined" disabled>
+            텍스트
+          </Button>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Button — Kakao</h2>
+        <div className="flex items-center gap-3">
+          <Button variant="kakao">카카오로 계속하기</Button>
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Switch</h2>
+        <div className="flex items-center gap-3">
+          <Switch />
+          <Switch defaultChecked />
+          <Switch disabled />
+          <Switch defaultChecked disabled />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">TextInput</h2>
+        <div className="flex w-[326px] flex-col gap-6">
+          <TextInput
+            label="제목 텍스트"
+            placeholder="텍스트"
+            helperText="보조 텍스트"
+          />
+          <TextInput
+            label="제목 텍스트"
+            defaultValue="텍스트"
+            helperText="보조 텍스트"
+          />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">TextArea</h2>
+        <div className="flex w-[335px] flex-col gap-4">
+          <TextArea placeholder="작은 거여도 괜찮아요, 생각나는 대로 적어보세요." />
+          <TextArea defaultValue="입력된 내용" />
+        </div>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Toast</h2>
+        <Button onClick={() => toast(TOAST_DEMO_MESSAGE)}>
+          토스트 띄우기
+        </Button>
+      </section>
+
+      <section className="flex flex-col gap-4">
+        <h2 className="typo-title-3">Tabs</h2>
+        <Tabs defaultValue="left" className="w-[224.667px]">
+          <TabsList>
+            <TabsTrigger value="left">텍스트</TabsTrigger>
+            <TabsTrigger value="right">텍스트</TabsTrigger>
+          </TabsList>
+          <TabsContent value="left" className="typo-body-2 text-gray-600">
+            첫 번째 탭 내용
+          </TabsContent>
+          <TabsContent value="right" className="typo-body-2 text-gray-600">
+            두 번째 탭 내용
+          </TabsContent>
+        </Tabs>
+      </section>
+    </main>
+  );
+}

@@ -41,9 +41,12 @@ export default function CreateBouquetPage() {
 
       <section className="flex flex-1 flex-col justify-between">
         <div>
-          <div className="flex flex-col gap-4 px-5 pb-5 pt-3">
-            <h1 className="typo-title-2 whitespace-pre-line text-[var(--color-brown-300)]">
-              {"반가워요 :)\n마음 꽃집에서 사용할 \n이름을 알려주세요."}
+          <div className="flex flex-col gap-4 px-5 pb-7.5 pt-3">
+            <h1
+              className="typo-title-2 whitespace-pre-line text-[var(--color-brown-300)]"
+              style={{ lineHeight: "30px" }}
+            >
+              {"반가워요 :)\n마음 꽃집에서 사용할\n이름을 알려주세요."}
             </h1>
             <p className="typo-body-2 text-[var(--color-brown-200)]">
               꽃다발을 보낼 상대방에도 해당 이름으로 보여요.

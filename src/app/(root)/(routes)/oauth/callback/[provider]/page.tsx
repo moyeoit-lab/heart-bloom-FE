@@ -4,6 +4,8 @@ import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
 
 import { toast } from "@/components/Toast";
+import { isKakaoProvider, oauthApi } from "@/features/oauth/api";
+import { OAUTH_PROVIDER } from "@/features/oauth/types";
 
 export default function OAuthCallbackPage() {
   const params = useParams<{ provider: string }>();
@@ -12,7 +14,8 @@ export default function OAuthCallbackPage() {
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
-      if (params.provider?.toLowerCase() !== "kakao") {
+      const provider = params.provider?.toLowerCase();
+      if (!provider || !isKakaoProvider(provider)) {
         toast("지원하지 않는 로그인 방식이에요.");
         router.replace("/");
         return;
@@ -42,34 +45,14 @@ export default function OAuthCallbackPage() {
         return;
       }
 
-      const provider = params.provider.toLowerCase();
-      const redirectUri = `${window.location.origin.replace(/\/+$/, "")}/oauth/callback/${provider}`;
-      const loginQueryParams = new URLSearchParams({
-        code,
-        redirectUri,
-      });
-      const loginEndpoint = `${apiUrl.replace(/\/+$/, "")}/api/v1/auth/oauth2/${provider}/login?${loginQueryParams.toString()}`;
+      const redirectUri = `${window.location.origin.replace(/\/+$/, "")}/oauth/callback/${OAUTH_PROVIDER}`;
 
       try {
-        const response = await fetch(loginEndpoint, {
-          method: "POST",
+        const accessToken = await oauthApi.login({
+          baseUrl: apiUrl,
+          code,
+          redirectUri,
         });
-
-        if (!response.ok) {
-          throw new Error(`Failed to login: ${response.status}`);
-        }
-
-        const payload = (await response.json()) as {
-          success?: boolean;
-          message?: string;
-          data?: { accessToken?: string };
-          accessToken?: string;
-        };
-
-        const accessToken = payload?.data?.accessToken ?? payload?.accessToken;
-        if (!accessToken) {
-          throw new Error("Access token not found in response");
-        }
 
         localStorage.setItem("accessToken", accessToken);
         toast("카카오 로그인이 완료됐어요.");

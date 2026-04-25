@@ -48,15 +48,15 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
 
       <section className="flex flex-1 flex-col justify-between">
         <div>
-          <div className="flex flex-col gap-4 px-5 pt-3">
+          <div className="flex flex-col px-5 pt-3">
             <div className="typo-title-3 flex flex-wrap items-end">
               <span className="text-[var(--color-red-300)]">{nickname}</span>
               <span className="text-[var(--color-brown-300)]">님은 </span>
             </div>
-            <h1 className="typo-title-3 text-[var(--color-brown-300)]">
+            <h1 className="typo-title-3 text-[var(--color-brown-300)] mb-4">
               누구에게 마음을 전달하고 싶나요?
             </h1>
-            <p className="typo-body-2 text-[var(--color-brown-200)]">
+            <p className="typo-body-2 text-[var(--color-brown-200)] mb-5">
               꽃다발은 1개당 1명에게만 보낼 수 있어요.
             </p>
           </div>
@@ -73,7 +73,7 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
                       onClick={() => handleChipClick(chip)}
                       className={`typo-body-1 h-11 min-w-20 rounded-[10px] px-3 ${
                         selectedRecipient === chip
-                          ? "bg-[var(--color-green-100)] text-[var(--color-green-400)]"
+                          ? "border border-[var(--color-green-300)] bg-[var(--color-green-100)] text-[var(--color-green-400)]"
                           : "border border-[var(--color-gray-100)] bg-[var(--color-white)] text-[var(--color-gray-300)]"
                       }`}
                     >

@@ -11,7 +11,11 @@ import type {
 export const useCreateSenderBouquetMutation = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
-  return useMutation<CreateSenderBouquetResponse, Error, CreateSenderBouquetRequest>({
+  return useMutation<
+    CreateSenderBouquetResponse,
+    Error,
+    CreateSenderBouquetRequest
+  >({
     mutationFn: (payload) => createSenderBouquet(apiUrl as string, payload),
   });
 };

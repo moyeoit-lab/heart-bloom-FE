@@ -53,8 +53,7 @@ const DEFAULT_NICKNAME = "이름";
 export default function BouquetTypeSelectPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nickname =
-    searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
+  const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
   const recipient = searchParams.get("recipient")?.trim() ?? "";
 
   const [selectedIndex, setSelectedIndex] = useState(DEFAULT_SELECTED_INDEX);

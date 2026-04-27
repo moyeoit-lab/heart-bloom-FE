@@ -77,12 +77,12 @@ export default function QuestionStepPage() {
 
   const stepRaw = Number(params?.step);
   const step = Number.isInteger(stepRaw) ? stepRaw : NaN;
-  const nickname =
-    searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
-  const recipient =
-    searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
+  const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
+  const recipient = searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
   const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
-  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(bouquetTypeRaw as BouquetTypeKey)
+  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(
+    bouquetTypeRaw as BouquetTypeKey,
+  )
     ? (bouquetTypeRaw as BouquetTypeKey)
     : null;
 
@@ -201,7 +201,9 @@ export default function QuestionStepPage() {
                 style={{ lineHeight: "30px" }}
               >
                 <span className="whitespace-nowrap">
-                  <span className="text-[var(--color-red-300)]">{nickname}</span>
+                  <span className="text-[var(--color-red-300)]">
+                    {nickname}
+                  </span>
                   <span className="text-[var(--color-brown-300)]">님이 </span>
                 </span>
                 <span className="whitespace-nowrap text-[var(--color-brown-300)]">

@@ -29,8 +29,16 @@ const OPTIONAL_LAST_QUESTION: Question = {
 
 export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
   GRATITUDE: [
-    { step: 1, recipientLine: "에게", body: "가장 고마웠던 순간은 언제인가요?" },
-    { step: 2, recipientLine: " 덕분에", body: "할 수 있게 된 것은 무엇인가요?" },
+    {
+      step: 1,
+      recipientLine: "에게",
+      body: "가장 고마웠던 순간은 언제인가요?",
+    },
+    {
+      step: 2,
+      recipientLine: " 덕분에",
+      body: "할 수 있게 된 것은 무엇인가요?",
+    },
     {
       step: 3,
       recipientLine: "이",

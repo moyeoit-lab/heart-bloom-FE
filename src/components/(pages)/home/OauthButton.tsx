@@ -13,9 +13,7 @@ type OauthButtonProps = {
   className?: string;
 };
 
-export default function OauthButton({
-  className = "",
-}: OauthButtonProps) {
+export default function OauthButton({ className = "" }: OauthButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleClick = async () => {

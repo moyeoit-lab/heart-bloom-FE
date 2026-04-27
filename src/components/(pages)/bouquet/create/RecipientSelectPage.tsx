@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
@@ -12,17 +12,19 @@ const FAMILY_GROUPS = [
   { label: "자녀", chips: ["딸", "아들"] },
   { label: "형제자매", chips: ["누나", "언니", "형", "오빠", "동생"] },
 ];
+const DEFAULT_NICKNAME = "이름";
 
-type RecipientSelectPageProps = {
-  nickname: string;
-};
-
-export default function RecipientSelectPage({ nickname }: RecipientSelectPageProps) {
+export default function RecipientSelectPage() {
+  const searchParams = useSearchParams();
+  const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
   const router = useRouter();
-  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null);
+  const [selectedRecipient, setSelectedRecipient] = useState<string | null>(
+    null,
+  );
   const [customRecipient, setCustomRecipient] = useState("");
   const trimmedCustomRecipient = customRecipient.trim();
-  const isNextEnabled = Boolean(selectedRecipient) || trimmedCustomRecipient.length > 0;
+  const isNextEnabled =
+    Boolean(selectedRecipient) || trimmedCustomRecipient.length > 0;
   const recipient = selectedRecipient ?? trimmedCustomRecipient;
 
   const handleNext = () => {
@@ -74,7 +76,9 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
           <div className="mt-1 flex flex-col">
             {FAMILY_GROUPS.map((group) => (
               <div key={group.label} className="flex flex-col gap-2 px-5 py-3">
-                <p className="typo-body-2-1 text-[var(--color-gray-600)]">{group.label}</p>
+                <p className="typo-body-2-1 text-[var(--color-gray-600)]">
+                  {group.label}
+                </p>
                 <div className="flex flex-wrap gap-3">
                   {group.chips.map((chip) => (
                     <button
@@ -95,12 +99,16 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
             ))}
 
             <div className="flex flex-col gap-2 px-5 py-3">
-              <p className="typo-body-2-1 text-[var(--color-gray-600)]">그 밖의 가족</p>
+              <p className="typo-body-2-1 text-[var(--color-gray-600)]">
+                그 밖의 가족
+              </p>
               <input
                 type="text"
                 maxLength={10}
                 value={customRecipient}
-                onChange={(event) => handleCustomRecipientChange(event.target.value)}
+                onChange={(event) =>
+                  handleCustomRecipientChange(event.target.value)
+                }
                 placeholder="ex. 고모, 이모, 삼촌, 할아버지, 할머니 등"
                 className={`typo-body-1 h-12 w-full rounded-xl border px-3 focus:outline-none ${
                   trimmedCustomRecipient.length > 0
@@ -108,7 +116,9 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
                     : "border-[var(--color-gray-100)] text-[var(--color-gray-900)] placeholder:text-[var(--color-gray-200)]"
                 }`}
               />
-              <p className="typo-caption-2 text-[var(--color-gray-400)]">10자 이내</p>
+              <p className="typo-caption-2 text-[var(--color-gray-400)]">
+                10자 이내
+              </p>
             </div>
           </div>
         </div>

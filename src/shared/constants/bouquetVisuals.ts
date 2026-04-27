@@ -18,6 +18,7 @@ export type BouquetVisual = {
   thumbnail: StaticImageData;
   hero: StaticImageData | null;
   bgColor: string;
+  accentColor: string;
 };
 
 export const BOUQUET_VISUALS: BouquetVisual[] = [
@@ -28,6 +29,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     thumbnail: yellowTulipThumb,
     hero: yellowFlower,
     bgColor: "#FFFBDC",
+    accentColor: "var(--color-point-yellow)",
   },
   {
     key: "RED_CARNATION",
@@ -36,6 +38,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     thumbnail: redCarnationThumb,
     hero: redFlower,
     bgColor: "#FCE5E5",
+    accentColor: "var(--color-point-red)",
   },
   {
     key: "BLUE_LILY",
@@ -44,6 +47,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     thumbnail: blueLilyThumb,
     hero: blueFlower,
     bgColor: "#DDEFFE",
+    accentColor: "var(--color-point-blue)",
   },
   {
     key: "PINK_GERBERA",
@@ -52,5 +56,6 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     thumbnail: pinkGerberaThumb,
     hero: pinkFlower,
     bgColor: "#FCE5EE",
+    accentColor: "var(--color-point-pink)",
   },
 ];

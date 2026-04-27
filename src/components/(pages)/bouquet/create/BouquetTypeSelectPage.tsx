@@ -2,17 +2,16 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { Button } from "@/components/Button";
+import { useBouquetTypesQuery, type BouquetType } from "@/features/bouquet";
 import {
   BOUQUET_VISUALS,
-  useBouquetTypesQuery,
-  type BouquetType,
   type BouquetVisual,
-} from "@/features/bouquet";
+} from "@/shared/constants/bouquetVisuals";
 
 const PAGE_WIDTH = 375;
 const HERO_CIRCLE_SIZE = 217;
@@ -23,7 +22,10 @@ const THUMB_SIZE = 76;
 const DEFAULT_SELECTED_INDEX = 0;
 
 const THUMB_FLOWER_LAYOUT: Partial<
-  Record<BouquetVisual["key"], { width: number; height: number; left: number; top: number }>
+  Record<
+    BouquetVisual["key"],
+    { width: number; height: number; left: number; top: number }
+  >
 > = {
   YELLOW_TULIP: { width: 42.764, height: 53.914, left: 12.5, top: 10 },
   BLUE_LILY: { width: 71.094, height: 48, left: 3, top: 17 },
@@ -37,7 +39,8 @@ type BouquetCard = {
 
 const mergeWithVisuals = (types: BouquetType[] | undefined): BouquetCard[] =>
   BOUQUET_VISUALS.map((visual, index) => {
-    const match = types?.find((type) => type.id === visual.key) ?? types?.[index];
+    const match =
+      types?.find((type) => type.id === visual.key) ?? types?.[index];
     return {
       visual,
       name: match?.name ?? visual.fallbackName,
@@ -45,23 +48,24 @@ const mergeWithVisuals = (types: BouquetType[] | undefined): BouquetCard[] =>
     };
   });
 
-type BouquetTypeSelectPageProps = {
-  nickname: string;
-  recipient: string;
-};
+const DEFAULT_NICKNAME = "이름";
 
-export default function BouquetTypeSelectPage({
-  nickname,
-  recipient,
-}: BouquetTypeSelectPageProps) {
+export default function BouquetTypeSelectPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const nickname =
+    searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
+  const recipient = searchParams.get("recipient")?.trim() ?? "";
+
   const [selectedIndex, setSelectedIndex] = useState(DEFAULT_SELECTED_INDEX);
   const { data: types } = useBouquetTypesQuery();
 
   const cards = useMemo(() => mergeWithVisuals(types), [types]);
   const selected = cards[selectedIndex] ?? cards[DEFAULT_SELECTED_INDEX];
 
-  const recipientQuery = recipient ? `&recipient=${encodeURIComponent(recipient)}` : "";
+  const recipientQuery = recipient
+    ? `&recipient=${encodeURIComponent(recipient)}`
+    : "";
 
   const handleNext = () => {
     if (!selected) return;

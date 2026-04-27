@@ -1,5 +1,5 @@
 import Footer from "@/components/Footer";
-import HomeActionSection from "@/components/pages/home/HomeActionSection";
+import HomeActionSection from "@/components/(pages)/home/HomeActionSection";
 
 export default function Home() {
   return (
@@ -29,8 +29,7 @@ export default function Home() {
           </h1>
           <p className="typo-body-2 text-[var(--color-brown-200)]">
             평소 잊고 지낸 우리 가족의 속마음
-            <br />
-            꽃 문답을 주고받으며 마음을 더 깊게 이어보세요
+            <br />꽃 문답을 주고받으며 마음을 더 깊게 이어보세요
           </p>
         </div>
 

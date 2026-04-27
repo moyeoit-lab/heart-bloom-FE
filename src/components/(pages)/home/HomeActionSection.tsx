@@ -1,7 +1,7 @@
 "use client";
 
 import { useSyncExternalStore } from "react";
-import OauthButton from "@/components/pages/home/OauthButton";
+import OauthButton from "@/components/(pages)/home/OauthButton";
 import { useBouquetCountQuery } from "@/features/bouquet/queries";
 
 type HomeActionSectionProps = {

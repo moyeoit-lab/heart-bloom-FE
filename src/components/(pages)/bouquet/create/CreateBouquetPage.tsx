@@ -24,7 +24,9 @@ export default function CreateBouquetPage() {
 
   const handleNext = () => {
     if (!isNicknameReady) return;
-    router.push(`/bouquet/create/recipient?nickname=${encodeURIComponent(nickname)}`);
+    router.push(
+      `/bouquet/create/recipient?nickname=${encodeURIComponent(nickname)}`,
+    );
   };
 
   return (

@@ -4,3 +4,51 @@ export type BouquetCountResponse = {
     count?: number;
   };
 };
+
+export type BouquetTypeKey =
+  | "YELLOW_TULIP"
+  | "RED_CARNATION"
+  | "BLUE_LILY"
+  | "PINK_GERBERA";
+
+export type BouquetType = {
+  id: BouquetTypeKey | string;
+  name: string;
+  description: string;
+};
+
+export type BouquetTypeListResponse = {
+  success?: boolean;
+  data?: {
+    types?: BouquetType[];
+  };
+};
+
+export type BouquetRole = "SENDER" | "RECEIVER";
+
+export type BouquetStatus = "IN_PROGRESS" | "COMPLETED";
+
+export type BouquetAnswerEntry = {
+  questionId: number;
+  content: string;
+};
+
+export type CreateSenderBouquetRequest = {
+  role: "SENDER";
+  partnerId: number;
+  bouquetType: string;
+  requiredQuestionIds: number[];
+  optionalQuestionId?: number;
+  answers: BouquetAnswerEntry[];
+};
+
+export type CreateSenderBouquetResponse = {
+  success?: boolean;
+  data?: {
+    bouquetId: number;
+    role: BouquetRole;
+    bouquetType: string;
+    status: BouquetStatus;
+  };
+  message?: string;
+};

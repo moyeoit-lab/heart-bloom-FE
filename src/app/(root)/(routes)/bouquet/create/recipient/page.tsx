@@ -1,15 +1,18 @@
-import RecipientSelectPage from "@/components/pages/bouquet/create/RecipientSelectPage";
+import { Suspense } from "react";
 
-type PageProps = {
-  searchParams?: Promise<{
-    nickname?: string | string[];
-  }>;
+import type { Metadata } from "next";
+
+import RecipientSelectPage from "@/components/(pages)/bouquet/create/RecipientSelectPage";
+
+export const metadata: Metadata = {
+  title: "상대방 선택 | 마음 꽃집",
+  description: "꽃다발을 받을 상대방을 선택해 주세요.",
 };
 
-export default async function Page({ searchParams }: PageProps) {
-  const resolvedSearchParams = await searchParams;
-  const nicknameParam = resolvedSearchParams?.nickname;
-  const nickname = (Array.isArray(nicknameParam) ? nicknameParam[0] : nicknameParam)?.trim() || "이름";
-
-  return <RecipientSelectPage nickname={nickname} />;
+export default function Page() {
+  return (
+    <Suspense fallback={null}>
+      <RecipientSelectPage />
+    </Suspense>
+  );
 }

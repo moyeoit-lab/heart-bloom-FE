@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
@@ -17,10 +18,19 @@ type RecipientSelectPageProps = {
 };
 
 export default function RecipientSelectPage({ nickname }: RecipientSelectPageProps) {
+  const router = useRouter();
   const [selectedRecipient, setSelectedRecipient] = useState<string | null>(null);
   const [customRecipient, setCustomRecipient] = useState("");
   const trimmedCustomRecipient = customRecipient.trim();
   const isNextEnabled = Boolean(selectedRecipient) || trimmedCustomRecipient.length > 0;
+  const recipient = selectedRecipient ?? trimmedCustomRecipient;
+
+  const handleNext = () => {
+    if (!isNextEnabled) return;
+    router.push(
+      `/bouquet/create/type?nickname=${encodeURIComponent(nickname)}&recipient=${encodeURIComponent(recipient)}`,
+    );
+  };
 
   const handleChipClick = (chip: string) => {
     setSelectedRecipient(chip);
@@ -107,6 +117,7 @@ export default function RecipientSelectPage({ nickname }: RecipientSelectPagePro
           <button
             type="button"
             disabled={!isNextEnabled}
+            onClick={handleNext}
             className={`typo-body-1 h-12 w-full rounded-xl ${
               isNextEnabled
                 ? "bg-[var(--color-green-400)] text-[var(--color-white)]"

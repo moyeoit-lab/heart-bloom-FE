@@ -7,7 +7,7 @@
 @utility typo-title-1 {
   font-size: var(--text-main-title);
   line-height: 40px;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 @utility typo-title-2 {

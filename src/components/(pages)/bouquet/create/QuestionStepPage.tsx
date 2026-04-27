@@ -96,7 +96,7 @@ export default function QuestionStepPage() {
     if (!isValid) router.replace("/bouquet/create");
   }, [isValid, router]);
 
-  const { answers, setAnswer, clearAnswers } = useBouquetAnswers();
+  const { answers, setAnswer } = useBouquetAnswers();
 
   const visual = useMemo(
     () =>
@@ -139,8 +139,9 @@ export default function QuestionStepPage() {
     if (process.env.NODE_ENV === "development") {
       console.info("[bouquet/create] submit payload (BE 연동 대기)", payload);
     }
-    clearAnswers();
-    router.push(`/bouquet/create/share?${queryString}`);
+    // NOTE: clearAnswers는 "꽃다발 공유하기" 시점에 호출 (PackingDonePage).
+    //   여기서 비우면 packing/done/flower 화면에서 발신자 답변을 못 읽음.
+    router.push(`/bouquet/create/packing?${queryString}`);
   };
 
   const handleNext = () => {
@@ -207,12 +208,12 @@ export default function QuestionStepPage() {
                   <span className="text-[var(--color-brown-300)]">님이 </span>
                 </span>
                 <span className="whitespace-nowrap text-[var(--color-brown-300)]">
-                  {recipient}
+                  상대방
                   {question.recipientLine}
                 </span>
               </p>
               <p
-                className="typo-title-2 text-[var(--color-brown-300)]"
+                className="typo-title-2 whitespace-pre-line text-[var(--color-brown-300)]"
                 style={{ lineHeight: "30px" }}
               >
                 {question.body}
@@ -222,8 +223,7 @@ export default function QuestionStepPage() {
 
           <div className="flex flex-col gap-2 px-5">
             <p className="typo-body-3 whitespace-nowrap text-[var(--color-green-400)]">
-              <span>To. </span>
-              <span>{recipient}</span>
+              <span>To. 상대방</span>
             </p>
             <TextArea
               value={value}

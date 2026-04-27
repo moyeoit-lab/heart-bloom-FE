@@ -7,6 +7,14 @@
 }
 
 @font-face {
+  font-family: "KIMM";
+  src: url("/fonts/KIMM_bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Paperlogy";
   src: url("/fonts/Paperlogy-4Regular.ttf") format("truetype");
   font-weight: 400;

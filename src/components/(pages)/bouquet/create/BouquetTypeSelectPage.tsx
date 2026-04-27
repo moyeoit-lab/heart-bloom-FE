@@ -189,7 +189,7 @@ export default function BouquetTypeSelectPage() {
           })}
         </div>
 
-        <div className="mt-auto bg-gradient-to-b from-transparent to-white p-5">
+        <div className="mt-auto bg-linear-to-b from-transparent to-white p-5">
           <Button variant="solid" onClick={handleNext} className="h-12 w-full">
             꽃다발 만들기
           </Button>

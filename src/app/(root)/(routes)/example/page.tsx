@@ -80,9 +80,7 @@ export default function ExamplePage() {
 
       <section className="flex flex-col gap-4">
         <h2 className="typo-title-3">Toast</h2>
-        <Button onClick={() => toast(TOAST_DEMO_MESSAGE)}>
-          토스트 띄우기
-        </Button>
+        <Button onClick={() => toast(TOAST_DEMO_MESSAGE)}>토스트 띄우기</Button>
       </section>
 
       <section className="flex flex-col gap-4">

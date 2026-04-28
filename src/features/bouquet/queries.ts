@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchBouquetCount, fetchBouquetTypes } from "@/features/bouquet/api";
+import { fetchBouquetCount, fetchBouquetShelf, fetchBouquetTypes } from "@/features/bouquet/api";
 import { bouquetKeys } from "@/features/bouquet/keys";
 
 export const useBouquetCountQuery = () => {
@@ -19,6 +19,16 @@ export const useBouquetTypesQuery = () => {
   return useQuery({
     queryKey: bouquetKeys.types(apiUrl),
     queryFn: () => fetchBouquetTypes(apiUrl as string),
+    enabled: Boolean(apiUrl),
+  });
+};
+
+export const useBouquetShelfQuery = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.list(apiUrl),
+    queryFn: () => fetchBouquetShelf(apiUrl as string),
     enabled: Boolean(apiUrl),
   });
 };

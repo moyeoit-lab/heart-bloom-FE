@@ -16,8 +16,7 @@ const DEFAULT_NICKNAME = "이름";
 export default function ReceiverPackingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const senderName =
-    searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
+  const senderName = searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
   const [dotStep, setDotStep] = useState(0);

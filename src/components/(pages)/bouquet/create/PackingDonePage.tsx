@@ -17,11 +17,16 @@ import yellowMiniA from "@/assets/images/packing/yellow-mini-a.svg";
 import yellowMiniQ from "@/assets/images/packing/yellow-mini-q.svg";
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/Switch";
-import type { BouquetTypeKey } from "@/features/bouquet";
+import { toast } from "@/components/Toast";
+import {
+  useBouquetLinkUrlQuery,
+  type BouquetTypeKey,
+} from "@/features/bouquet";
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
+import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 375;
-const PAGE_HEIGHT = 812;
+const SCENE_HEIGHT = 812;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_RECIPIENT = "상대방";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
@@ -50,15 +55,13 @@ const PACKING_DONE_VISUALS: Record<BouquetTypeKey, PackingDoneVisual> = {
     miniA: redMiniA,
   },
   BLUE_LILY: {
-    bgClass:
-      "bg-gradient-to-t from-[#e8f0d2] to-[#79c0ff] to-[112.41%]",
+    bgClass: "bg-gradient-to-t from-[#e8f0d2] to-[#79c0ff] to-[112.41%]",
     nicknameColor: "var(--color-point-blue)",
     miniQ: blueMiniQ,
     miniA: blueMiniA,
   },
   PINK_GERBERA: {
-    bgClass:
-      "bg-gradient-to-t from-[#feffd7] to-[#ffd0db] to-[112.41%]",
+    bgClass: "bg-gradient-to-t from-[#feffd7] to-[#ffd0db] to-[112.41%]",
     nicknameColor: "var(--color-red-400)",
     miniQ: pinkMiniQ,
     miniA: pinkMiniA,
@@ -77,31 +80,30 @@ type FlowerClickRegion = {
 };
 
 // 좌표는 mini SVG의 viewBox(375×812) 기준. 배열 인덱스 = 질문 step - 1.
-// 모든 매핑은 사용자가 토글 ON 한 SVG 라벨을 보고 검증/지정한 순서.
 const FLOWER_CLICK_REGIONS: Record<BouquetTypeKey, FlowerClickRegion[]> = {
   YELLOW_TULIP: [
-    { left: 210, top: 222, width: 100, height: 127 }, // Q1 단둘이 있던 시간 (top-right)
-    { left: 171, top: 345, width: 95, height: 92 }, // Q2 즐거웠던 때 (bottom-right)
-    { left: 61, top: 337, width: 124, height: 104 }, // Q3 돌아가고싶은 순간 (bottom-left)
-    { left: 84, top: 208, width: 147, height: 148 }, // Q4 같이 하고싶은 것 (top-left)
+    { left: 210, top: 222, width: 100, height: 127 },
+    { left: 171, top: 345, width: 95, height: 92 },
+    { left: 61, top: 337, width: 124, height: 104 },
+    { left: 84, top: 208, width: 147, height: 148 },
   ],
   RED_CARNATION: [
-    { left: 57, top: 317, width: 145, height: 143 }, // Q1 고마웠던 순간 (추정 — bottom-left)
-    { left: 173, top: 350, width: 108, height: 102 }, // Q2 할 수 있게 된 것 (추정 — bottom-right)
-    { left: 178, top: 227, width: 159, height: 159 }, // Q3 챙겨주는 느낌 (검증됨 — top-right)
-    { left: 68, top: 215, width: 157, height: 146 }, // Q4 기억에 남는 한 마디 (검증됨 — top-left)
+    { left: 57, top: 317, width: 145, height: 143 },
+    { left: 173, top: 350, width: 108, height: 102 },
+    { left: 178, top: 227, width: 159, height: 159 },
+    { left: 68, top: 215, width: 157, height: 146 },
   ],
   BLUE_LILY: [
-    { left: 175, top: 363, width: 111, height: 102 }, // Q1 (rightmost-ish)
-    { left: 193, top: 273, width: 144, height: 101 }, // Q2
-    { left: 65, top: 190, width: 157, height: 189 }, // Q3 (leftmost)
-    { left: 70, top: 364, width: 104, height: 85 }, // Q4
+    { left: 175, top: 363, width: 111, height: 102 },
+    { left: 193, top: 273, width: 144, height: 101 },
+    { left: 65, top: 190, width: 157, height: 189 },
+    { left: 70, top: 364, width: 104, height: 85 },
   ],
   PINK_GERBERA: [
-    { left: 91, top: 228, width: 126, height: 109 }, // Q1
-    { left: 159, top: 349, width: 125, height: 122 }, // Q2 (was Q4 position)
-    { left: 189, top: 262, width: 118, height: 120 }, // Q3
-    { left: 69, top: 334, width: 115, height: 97 }, // Q4 (was Q2 position)
+    { left: 91, top: 228, width: 126, height: 109 },
+    { left: 159, top: 349, width: 125, height: 122 },
+    { left: 189, top: 262, width: 118, height: 120 },
+    { left: 69, top: 334, width: 115, height: 97 },
   ],
 };
 
@@ -121,14 +123,32 @@ export default function PackingDonePage() {
   const flowerRegions = FLOWER_CLICK_REGIONS[bouquetTypeKey];
   const questions = getQuestions(bouquetTypeKey);
 
+  const { result } = useBouquetCreationResult();
+  const bouquetId = result?.bouquetId;
+  const { data: shareUrl, isPending: isShareUrlPending } =
+    useBouquetLinkUrlQuery(bouquetId);
+
   const handleFlowerClick = (step: number) => {
     const params = new URLSearchParams(searchParams.toString());
     router.push(`/bouquet/create/done/flower/${step}?${params.toString()}`);
   };
 
-  const handleShare = () => {
-    // TODO: 공유 동작 (kakao share / 링크 복사)
-    console.info("[bouquet/create/done] share clicked");
+  const handleShare = async () => {
+    if (!shareUrl) {
+      toast("공유 링크를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+      return;
+    }
+    try {
+      if (navigator.share) {
+        await navigator.share({ url: shareUrl });
+        return;
+      }
+      await navigator.clipboard.writeText(shareUrl);
+      toast("공유 링크를 복사했어요.");
+    } catch (error) {
+      console.error(error);
+      toast("공유에 실패했어요. 다시 시도해 주세요.");
+    }
   };
 
   const handleDownload = () => {
@@ -139,48 +159,50 @@ export default function PackingDonePage() {
   return (
     <main
       className={`relative mx-auto flex min-h-dvh flex-col overflow-hidden ${visual.bgClass}`}
-      style={{ width: PAGE_WIDTH, minHeight: PAGE_HEIGHT }}
+      style={{ width: PAGE_WIDTH }}
     >
-      <Image
-        src={heroSrc}
-        alt=""
-        aria-hidden
-        priority
-        fill
-        sizes={`${PAGE_WIDTH}px`}
-        className="pointer-events-none object-cover object-center"
-      />
+      {/* SVG 장면 + 클릭 영역은 고정 812 높이 컨테이너 안에 함께 — 좌표 일관성 */}
+      <div
+        className="pointer-events-none absolute left-0 top-0 z-0"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+      >
+        <Image
+          src={heroSrc}
+          alt=""
+          aria-hidden
+          priority
+          fill
+          sizes={`${PAGE_WIDTH}px`}
+          className="object-cover object-top"
+        />
+      </div>
 
-      {flowerRegions.map((region, index) => {
-        const step = index + 1;
-        const subjectTitle = questions[index]?.subjectTitle ?? `Q${step}`;
-        return (
-          <button
-            key={index}
-            type="button"
-            onClick={() => handleFlowerClick(step)}
-            aria-label={`${subjectTitle} 자세히 보기`}
-            className="absolute z-10 cursor-pointer bg-transparent"
-            style={{
-              left: region.left,
-              top: region.top,
-              width: region.width,
-              height: region.height,
-            }}
-          >
-            {process.env.NODE_ENV === "development" ? (
-              <span
-                aria-hidden
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-md border-2 border-white bg-black/80 px-2 py-1 text-[11px] font-bold text-white"
-              >
-                Q{step}: {subjectTitle}
-              </span>
-            ) : null}
-          </button>
-        );
-      })}
+      <div
+        className="absolute left-0 top-0 z-10"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+      >
+        {flowerRegions.map((region, index) => {
+          const step = index + 1;
+          const subjectTitle = questions[index]?.subjectTitle ?? `Q${step}`;
+          return (
+            <button
+              key={index}
+              type="button"
+              onClick={() => handleFlowerClick(step)}
+              aria-label={`${subjectTitle} 자세히 보기`}
+              className="absolute cursor-pointer bg-transparent"
+              style={{
+                left: region.left,
+                top: region.top,
+                width: region.width,
+                height: region.height,
+              }}
+            />
+          );
+        })}
+      </div>
 
-      <header className="relative z-10 flex items-center justify-between p-4">
+      <header className="relative z-20 flex items-center justify-between p-4">
         <Link href="/" aria-label="홈으로 돌아가기">
           <Image src={homeIcon} alt="" aria-hidden width={24} height={24} />
         </Link>
@@ -201,18 +223,23 @@ export default function PackingDonePage() {
             aria-label="이미지 저장"
             className="flex h-6 w-6 items-center justify-center"
           >
-            <Image src={downloadIcon} alt="" aria-hidden width={24} height={24} />
+            <Image
+              src={downloadIcon}
+              alt=""
+              aria-hidden
+              width={24}
+              height={24}
+            />
           </button>
         </div>
       </header>
 
-      <section className="relative z-10 flex flex-col items-center gap-4 px-5 pb-5">
-        <h1
-          className="typo-title-2 text-center"
-          style={{ lineHeight: "30px" }}
-        >
+      <section className="relative z-20 flex flex-col items-center gap-4 px-5 pb-5">
+        <h1 className="typo-title-2 text-center" style={{ lineHeight: "30px" }}>
           <span style={{ color: visual.nicknameColor }}>{nickname}</span>
-          <span className="text-[var(--color-brown-300)]">님의 꽃다발 준비중</span>
+          <span className="text-[var(--color-brown-300)]">
+            님의 꽃다발 준비중
+          </span>
         </h1>
         <p className="typo-body-2 text-center text-[var(--color-brown-300)]">
           <span>{recipient}</span>에게 링크를 공유하고
@@ -221,10 +248,11 @@ export default function PackingDonePage() {
         </p>
       </section>
 
-      <div className="relative z-10 mt-auto p-5">
+      <div className="relative z-20 mt-auto p-5">
         <Button
           variant="solid"
           onClick={handleShare}
+          disabled={!bouquetId || isShareUrlPending}
           className="h-12 w-full"
         >
           꽃다발 공유하기

@@ -33,18 +33,20 @@ const THUMB_FLOWER_LAYOUT: Partial<
 
 type BouquetCard = {
   visual: BouquetVisual;
+  beId: number;
   name: string;
   description: string;
 };
 
+// BOUQUET_VISUALS의 beId를 우선 신뢰하되, BE 응답이 같은 id로 내려오면 이름/설명만 덮어씀.
 const mergeWithVisuals = (types: BouquetType[] | undefined): BouquetCard[] =>
-  BOUQUET_VISUALS.map((visual, index) => {
-    const match =
-      types?.find((type) => type.id === visual.key) ?? types?.[index];
+  BOUQUET_VISUALS.map((visual) => {
+    const match = types?.find((t) => t.id === visual.beId);
     return {
       visual,
-      name: match?.name ?? visual.fallbackName,
-      description: match?.description ?? visual.fallbackDescription,
+      beId: visual.beId,
+      name: match?.bouquetName ?? visual.fallbackName,
+      description: match?.bouquetDescription ?? visual.fallbackDescription,
     };
   });
 
@@ -69,7 +71,7 @@ export default function BouquetTypeSelectPage() {
   const handleNext = () => {
     if (!selected) return;
     router.push(
-      `/bouquet/create/questions/1?nickname=${encodeURIComponent(nickname)}${recipientQuery}&bouquetType=${selected.visual.key}`,
+      `/bouquet/create/questions/1?nickname=${encodeURIComponent(nickname)}${recipientQuery}&bouquetType=${selected.visual.key}&bouquetTypeId=${selected.beId}`,
     );
   };
 

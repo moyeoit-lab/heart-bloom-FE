@@ -7,16 +7,20 @@ import { useEffect, useMemo } from "react";
 
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { TextArea } from "@/components/TextArea";
-import type { BouquetTypeKey } from "@/features/bouquet";
+import {
+  useBouquetQuestionAnswersQuery,
+  useLandingQuestionsQuery,
+  type BouquetTypeKey,
+} from "@/features/bouquet";
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
+import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 375;
 const TEXTAREA_ROWS = 8;
 const REQUIRED_STEPS = 4;
 const DEFAULT_NICKNAME = "이름";
-const DEFAULT_RECIPIENT = "상대방";
 
 const VALID_BOUQUET_KEYS = new Set<BouquetTypeKey>(
   BOUQUET_VISUALS.map((visual) => visual.key),
@@ -40,9 +44,10 @@ export default function FlowerDetailPage() {
   const stepRaw = Number(params?.step);
   const step = Number.isInteger(stepRaw) ? stepRaw : NaN;
   const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
-  const recipient = searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
   const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
-  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(bouquetTypeRaw as BouquetTypeKey)
+  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(
+    bouquetTypeRaw as BouquetTypeKey,
+  )
     ? (bouquetTypeRaw as BouquetTypeKey)
     : null;
 
@@ -57,6 +62,14 @@ export default function FlowerDetailPage() {
   }, [isValid, router]);
 
   const { answers } = useBouquetAnswers();
+  const { result } = useBouquetCreationResult();
+  const linkToken = result?.linkToken;
+  const { data: landingQuestions } = useLandingQuestionsQuery();
+  const questionIdForStep = landingQuestions?.[step - 1]?.questionId;
+  const { data: questionAnswers } = useBouquetQuestionAnswersQuery(
+    linkToken,
+    questionIdForStep,
+  );
 
   const visual = useMemo(
     () =>
@@ -71,13 +84,13 @@ export default function FlowerDetailPage() {
 
   if (!isValid || !visual || !question || !bouquetTypeKey) return null;
 
-  const senderAnswer = answers[step] ?? "";
+  // BE 응답이 있으면 그걸 우선, 없으면 로컬 발신자 입력값으로 폴백.
+  const senderAnswer =
+    questionAnswers?.senderAnswer?.subjectiveContent ?? answers[step] ?? "";
+  const recipientAnswer =
+    questionAnswers?.receiverAnswer?.subjectiveContent ?? "";
+  const isRecipientAnswered = recipientAnswer.trim().length > 0;
   const bgClass = FLOWER_BG_BY_TYPE[bouquetTypeKey];
-
-  // TODO: 수신자 답변 상태 = BE 연동 후 GET /api/v1/bouquets/links/{token} 응답으로 결정.
-  //   현재는 항상 "공유 전(잠금)" 상태로 표시.
-  const isRecipientAnswered = false;
-  const recipientAnswer = "";
 
   const queryString = searchParams.toString();
   const backHref = `/bouquet/create/done?${queryString}`;
@@ -128,7 +141,9 @@ export default function FlowerDetailPage() {
       <section className="relative mt-6 flex flex-col gap-2 px-5 pb-10">
         <div
           className={
-            isRecipientAnswered ? "flex flex-col gap-2" : "flex flex-col gap-2 blur-[3px]"
+            isRecipientAnswered
+              ? "flex flex-col gap-2"
+              : "flex flex-col gap-2 blur-[3px]"
           }
         >
           <p className="typo-body-3 whitespace-nowrap text-[var(--color-gray-300)]">

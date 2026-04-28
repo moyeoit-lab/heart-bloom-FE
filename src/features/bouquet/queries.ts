@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 
-import { fetchBouquetCount, fetchBouquetTypes } from "@/features/bouquet/api";
+import {
+  fetchBouquetByLink,
+  fetchBouquetCount,
+  fetchBouquetLinkUrl,
+  fetchBouquetQuestionAnswers,
+  fetchBouquetTypes,
+  fetchLandingQuestions,
+} from "@/features/bouquet/api";
 import { bouquetKeys } from "@/features/bouquet/keys";
 
 export const useBouquetCountQuery = () => {
@@ -20,5 +27,53 @@ export const useBouquetTypesQuery = () => {
     queryKey: bouquetKeys.types(apiUrl),
     queryFn: () => fetchBouquetTypes(apiUrl as string),
     enabled: Boolean(apiUrl),
+  });
+};
+
+export const useLandingQuestionsQuery = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.landingQuestions(apiUrl),
+    queryFn: () => fetchLandingQuestions(apiUrl as string),
+    enabled: Boolean(apiUrl),
+  });
+};
+
+export const useBouquetLinkUrlQuery = (bouquetId: number | undefined) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.linkUrl(apiUrl, bouquetId),
+    queryFn: () => fetchBouquetLinkUrl(apiUrl as string, bouquetId as number),
+    enabled: Boolean(apiUrl) && Boolean(bouquetId),
+  });
+};
+
+export const useBouquetByLinkQuery = (token: string | undefined) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.byLink(apiUrl, token),
+    queryFn: () => fetchBouquetByLink(apiUrl as string, token as string),
+    enabled: Boolean(apiUrl) && Boolean(token),
+  });
+};
+
+export const useBouquetQuestionAnswersQuery = (
+  token: string | undefined,
+  questionId: number | undefined,
+) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.questionAnswers(apiUrl, token, questionId),
+    queryFn: () =>
+      fetchBouquetQuestionAnswers(
+        apiUrl as string,
+        token as string,
+        questionId as number,
+      ),
+    enabled: Boolean(apiUrl) && Boolean(token) && Boolean(questionId),
   });
 };

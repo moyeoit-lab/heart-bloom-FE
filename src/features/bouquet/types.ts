@@ -52,3 +52,25 @@ export type CreateSenderBouquetResponse = {
   };
   message?: string;
 };
+
+export type BouquetShelfItem = {
+  bouquetId: number;
+  senderId: number;
+  senderType: "USER" | string;
+  receiverId: number | null;
+  receiverType: "USER" | string;
+  bouquetTypeId: number;
+  bouquetName: string;
+  bouquetDescription: string;
+  bouquetImageUrl?: string | null;
+};
+
+export type BouquetShelfResponse = {
+  success?: boolean;
+  message?: string;
+  data?: {
+    senderName?: string;
+    sentBouquets?: BouquetShelfItem[];
+    receivedBouquets?: BouquetShelfItem[];
+  };
+};

@@ -2,6 +2,8 @@ import { apiRequest } from "@/shared/api/client";
 
 import type {
   BouquetCountResponse,
+  BouquetShelfItem,
+  BouquetShelfResponse,
   BouquetType,
   BouquetTypeListResponse,
   CreateSenderBouquetRequest,
@@ -39,4 +41,19 @@ export const createSenderBouquet = async (
       headers: { "Content-Type": "application/json" },
     },
   );
+};
+
+export const fetchBouquetShelf = async (
+  baseUrl: string,
+): Promise<{
+  senderName: string;
+  sentBouquets: BouquetShelfItem[];
+  receivedBouquets: BouquetShelfItem[];
+}> => {
+  const response = await apiRequest<BouquetShelfResponse>(baseUrl, "/api/v1/bouquet");
+  return {
+    senderName: response?.data?.senderName ?? "",
+    sentBouquets: response?.data?.sentBouquets ?? [],
+    receivedBouquets: response?.data?.receivedBouquets ?? [],
+  };
 };

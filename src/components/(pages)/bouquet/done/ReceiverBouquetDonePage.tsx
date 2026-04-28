@@ -78,7 +78,8 @@ const pickHero = (
   showMessages: boolean,
 ) => {
   const variant = HERO_BY_TYPE[bouquetTypeKey];
-  if (hasOptional) return showMessages ? variant.optionalOn : variant.optionalOff;
+  if (hasOptional)
+    return showMessages ? variant.optionalOn : variant.optionalOff;
   return showMessages ? variant.requiredOn : variant.requiredOff;
 };
 
@@ -96,13 +97,14 @@ const ACTION_BUTTONS_TOP = 845 - STATUS_BAR_OFFSET;
 export default function ReceiverBouquetDonePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const senderName =
-    searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
+  const senderName = searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
 
   const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
-  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(bouquetTypeRaw as BouquetTypeKey)
+  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(
+    bouquetTypeRaw as BouquetTypeKey,
+  )
     ? (bouquetTypeRaw as BouquetTypeKey)
     : DEFAULT_BOUQUET_KEY;
 
@@ -164,10 +166,7 @@ export default function ReceiverBouquetDonePage() {
         </Link>
         <div className="flex items-center gap-4">
           <label className="flex items-center gap-2">
-            <span
-              className="typo-caption-1"
-              style={{ color: "#5F4444" }}
-            >
+            <span className="typo-caption-1" style={{ color: "#5F4444" }}>
               메시지 보이기
             </span>
             <Switch

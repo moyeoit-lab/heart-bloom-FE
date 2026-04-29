@@ -26,7 +26,12 @@ import yellowRequiredOn from "@/assets/images/bouquet-done/yellow-required-on.sv
 import { Button } from "@/components/Button";
 import BouquetFlowerDetailOverlay from "@/components/(pages)/bouquet/done/BouquetFlowerDetailOverlay";
 import { Switch } from "@/components/Switch";
-import type { BouquetTypeKey } from "@/features/bouquet";
+import { toast } from "@/components/Toast";
+import {
+  useBouquetLinkQuestionsQuery,
+  useBouquetQuestionAnswersQuery,
+  type BouquetTypeKey,
+} from "@/features/bouquet";
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 
 const PAGE_WIDTH = 375;
@@ -171,6 +176,7 @@ const NOTE_HOTSPOT_BY_TYPE: Partial<Record<BouquetTypeKey, FlowerHotspot>> = {
 export default function ReceiverBouquetDonePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const token = searchParams.get("token")?.trim();
   const senderName = searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
@@ -195,14 +201,52 @@ export default function ReceiverBouquetDonePage() {
     activeStep !== null ? getQuestionByStep(bouquetTypeKey, activeStep) : null;
   const activeTitle =
     activeQuestion?.detailTitle ?? activeQuestion?.subjectTitle ?? "";
+  const { data: linkQuestions } = useBouquetLinkQuestionsQuery(token);
+  const sortedQuestions = [...(linkQuestions ?? [])].sort((a, b) => {
+    const aSortOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+    const bSortOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+    return aSortOrder - bSortOrder;
+  });
+  const activeQuestionId =
+    activeStep !== null ? sortedQuestions[activeStep - 1]?.questionId : undefined;
+  const { data: activeQuestionAnswers } = useBouquetQuestionAnswersQuery(
+    token,
+    activeQuestionId,
+  );
+  const senderAnswerText = activeQuestionAnswers?.senderAnswer?.subjectiveContent ?? "";
+  const receiverAnswerText =
+    activeQuestionAnswers?.receiverAnswer?.subjectiveContent ?? "";
 
   const handleShare = () => {
-    // TODO: 공유 동작 (kakao share / 링크 복사)
-    console.info("[bouquet/receive/done] share clicked");
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const currentUrl = window.location.href;
+
+    void navigator.clipboard
+      .writeText(currentUrl)
+      .then(() => toast("현재 페이지 링크를 복사했어요."))
+      .catch((error) => {
+        console.error(error);
+        toast("링크 복사에 실패했어요. 다시 시도해 주세요.");
+      });
   };
 
   const handleCreateNew = () => {
-    router.push("/bouquet/create");
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const isLoggedIn = Boolean(window.localStorage.getItem("accessToken"));
+
+    if (isLoggedIn) {
+      router.push("/bouquet/create");
+      return;
+    }
+
+    toast("로그인 후 꽃다발을 만들 수 있어요.");
+    router.push("/");
   };
 
   const handleDownload = () => {
@@ -377,9 +421,8 @@ export default function ReceiverBouquetDonePage() {
           step={activeStep}
           title={activeTitle}
           receiverName={receiverName}
-          // TODO(데이터): 실제 답변 페이로드 연결.
-          senderAnswer=""
-          receiverAnswer=""
+          senderAnswer={senderAnswerText}
+          receiverAnswer={receiverAnswerText}
           onClose={() => setActiveStep(null)}
         />
       ) : null}

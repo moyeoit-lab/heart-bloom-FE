@@ -34,6 +34,25 @@ export type BouquetCountResponse = {
   message?: string;
 };
 
+// ── GET /api/v1/bouquet
+export type BouquetShelfItem = {
+  bouquetId: number;
+  bouquetTypeId: number;
+  bouquetName: string;
+  bouquetImageUrl: string;
+  createdAt: string;
+};
+
+export type BouquetShelfResponse = {
+  success?: boolean;
+  data?: {
+    senderName?: string;
+    sentBouquets?: BouquetShelfItem[];
+    receivedBouquets?: BouquetShelfItem[];
+  };
+  message?: string;
+};
+
 // ── GET /api/v1/bouquet/type
 export type BouquetType = {
   id: number;

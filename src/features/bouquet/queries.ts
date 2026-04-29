@@ -22,6 +22,16 @@ export const useBouquetCountQuery = () => {
   });
 };
 
+export const useBouquetShelfQuery = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.list(apiUrl),
+    queryFn: () => fetchBouquetShelf(apiUrl as string),
+    enabled: Boolean(apiUrl),
+  });
+};
+
 export const useBouquetTypesQuery = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 

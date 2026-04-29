@@ -22,7 +22,7 @@ const notifyKey = (key: string) => {
 const readRaw = (key: string): string | null =>
   isBrowser() ? window.sessionStorage.getItem(key) : null;
 
-const parseOrFallback = <T,>(raw: string | null, fallback: T): T => {
+const parseOrFallback = <T>(raw: string | null, fallback: T): T => {
   if (raw === null) return fallback;
   try {
     return JSON.parse(raw) as T;
@@ -33,7 +33,7 @@ const parseOrFallback = <T,>(raw: string | null, fallback: T): T => {
 
 type Updater<T> = T | ((prev: T) => T);
 
-export const useSessionState = <T,>(key: string, initial: T) => {
+export const useSessionState = <T>(key: string, initial: T) => {
   const subscribe = useCallback(
     (callback: () => void) => {
       const unsubscribeInApp = subscribeToKey(key, callback);

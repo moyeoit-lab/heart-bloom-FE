@@ -1,13 +1,22 @@
 import { apiRequest } from "@/shared/api/client";
 
 import type {
+  ApiVoidResponse,
   BouquetCountResponse,
+  BouquetForReceiver,
+  BouquetForReceiverResponse,
+  BouquetLinkUrlResponse,
+  BouquetQuestionAnswers,
+  BouquetQuestionAnswersResponse,
   BouquetShelfItem,
   BouquetShelfResponse,
   BouquetType,
   BouquetTypeListResponse,
-  CreateSenderBouquetRequest,
-  CreateSenderBouquetResponse,
+  CompleteBouquetRequest,
+  CreateBouquetRequest,
+  CreateBouquetResponse,
+  LandingQuestion,
+  LandingQuestionsResponse,
 } from "@/features/bouquet/types";
 
 export const fetchBouquetCount = async (baseUrl: string) => {
@@ -25,16 +34,84 @@ export const fetchBouquetTypes = async (
     baseUrl,
     "/api/v1/bouquet/type",
   );
-  return response?.data?.types ?? [];
+  return response?.data ?? [];
 };
 
-export const createSenderBouquet = async (
+export const fetchLandingQuestions = async (
   baseUrl: string,
-  payload: CreateSenderBouquetRequest,
-): Promise<CreateSenderBouquetResponse> => {
-  return apiRequest<CreateSenderBouquetResponse>(
+): Promise<LandingQuestion[]> => {
+  const response = await apiRequest<LandingQuestionsResponse>(
     baseUrl,
-    "/api/v1/bouquets/sender",
+    "/api/v1/questions/landing",
+  );
+  return response?.data?.questions ?? [];
+};
+
+export const createBouquet = async (
+  baseUrl: string,
+  payload: CreateBouquetRequest,
+): Promise<CreateBouquetResponse> => {
+  return apiRequest<CreateBouquetResponse>(baseUrl, "/api/v1/bouquet", {
+    method: "POST",
+    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
+export const fetchBouquetLinkUrl = async (
+  baseUrl: string,
+  bouquetId: number,
+): Promise<string | undefined> => {
+  const response = await apiRequest<BouquetLinkUrlResponse>(
+    baseUrl,
+    `/api/v1/bouquet/link/${bouquetId}/url`,
+  );
+  return response?.data?.url;
+};
+
+// ── 수신자 측 (bouquet-receiver-controller) ────────────────────────────────
+export const fetchBouquetByLink = async (
+  baseUrl: string,
+  token: string,
+): Promise<BouquetForReceiver | undefined> => {
+  const response = await apiRequest<BouquetForReceiverResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}`,
+  );
+  return response?.data;
+};
+
+export const fetchBouquetQuestionAnswers = async (
+  baseUrl: string,
+  token: string,
+  questionId: number,
+): Promise<BouquetQuestionAnswers | undefined> => {
+  const response = await apiRequest<BouquetQuestionAnswersResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}/questions/${questionId}/answers`,
+  );
+  return response?.data;
+};
+
+export const claimBouquetLink = async (
+  baseUrl: string,
+  token: string,
+): Promise<ApiVoidResponse> => {
+  return apiRequest<ApiVoidResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}/claim`,
+    { method: "POST" },
+  );
+};
+
+export const completeBouquet = async (
+  baseUrl: string,
+  token: string,
+  payload: CompleteBouquetRequest,
+): Promise<ApiVoidResponse> => {
+  return apiRequest<ApiVoidResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}/answers`,
     {
       method: "POST",
       body: JSON.stringify(payload),

@@ -9,18 +9,19 @@ import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import homeIcon from "@/assets/icons/home-icon.svg";
 import { Button } from "@/components/Button";
 import { TextArea } from "@/components/TextArea";
-import type {
-  BouquetAnswerEntry,
-  BouquetTypeKey,
-  CreateSenderBouquetRequest,
-} from "@/features/bouquet";
+import { toast } from "@/components/Toast";
 import {
-  BE_QUESTION_IDS_BY_TYPE,
-  CLIENT_TO_BE_BOUQUET_TYPE,
-} from "@/shared/constants/bouquetBeMapping";
+  useCreateBouquetMutation,
+  useLandingQuestionsQuery,
+  type BouquetTypeKey,
+  type CreateBouquetAnswer,
+  type CreateBouquetRequest,
+  type LandingQuestion,
+} from "@/features/bouquet";
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
+import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 import QuestionStepper from "./QuestionStepper";
 
@@ -33,40 +34,51 @@ const DEFAULT_RECIPIENT = "상대방";
 const VALID_BOUQUET_KEYS = new Set<BouquetTypeKey>(
   BOUQUET_VISUALS.map((visual) => visual.key),
 );
-// TODO(BE): 수신자 회원 ID(partnerId) 결정 방식 확정 후 교체.
-//   - 발신자가 꽃다발 만들 시점엔 수신자 가입 전이라 회원 ID가 없음.
-//   - BE가 placeholder member를 자동 생성하는지, 별도 endpoint로 만들어야 하는지 확인 필요.
-const PLACEHOLDER_PARTNER_ID = 0;
 
-const buildSenderPayload = (input: {
-  partnerId: number;
-  bouquetTypeKey: BouquetTypeKey;
-  answers: Record<number, string>;
-}): CreateSenderBouquetRequest => {
-  const ids = BE_QUESTION_IDS_BY_TYPE[input.bouquetTypeKey];
-  const answerEntries: BouquetAnswerEntry[] = ids.required.map(
-    (questionId, index) => ({
-      questionId,
-      content: input.answers[index + 1] ?? "",
-    }),
-  );
-
-  const optionalContent = (input.answers[TOTAL_STEPS] ?? "").trim();
-  const hasOptional = optionalContent.length > 0;
-  if (hasOptional) {
-    answerEntries.push({
-      questionId: ids.optional,
-      content: optionalContent,
-    });
+// step(1..5) → questionId.
+// landing questions 응답이 sortOrder 순으로 정렬돼 있다고 가정하고 인덱스로 매칭.
+const buildQuestionIdByStep = (
+  questions: LandingQuestion[] | undefined,
+): Record<number, number> => {
+  if (!questions) return {};
+  const map: Record<number, number> = {};
+  for (let i = 0; i < TOTAL_STEPS; i += 1) {
+    const q = questions[i];
+    if (q?.questionId !== undefined) map[i + 1] = q.questionId;
   }
+  return map;
+};
+
+const buildCreateBouquetPayload = (input: {
+  displayName: string;
+  relationName: string;
+  bouquetTypeId: number;
+  answers: Record<number, string>;
+  questionIdByStep: Record<number, number>;
+}): CreateBouquetRequest => {
+  const entries: CreateBouquetAnswer[] = Array.from(
+    { length: TOTAL_STEPS },
+    (_, index): CreateBouquetAnswer | null => {
+      const step = index + 1;
+      const questionId = input.questionIdByStep[step];
+      if (questionId === undefined) return null;
+      const answer = input.answers[step] ?? "";
+      if (answer.trim().length === 0) return null;
+      return {
+        questionId,
+        // 메모리 컨벤션: 모든 질문 주관식 고정.
+        answerType: "SUBJECTIVE",
+        answer,
+        sortOrder: step,
+      };
+    },
+  ).filter((entry): entry is CreateBouquetAnswer => entry !== null);
 
   return {
-    role: "SENDER",
-    partnerId: input.partnerId,
-    bouquetType: CLIENT_TO_BE_BOUQUET_TYPE[input.bouquetTypeKey],
-    requiredQuestionIds: [...ids.required],
-    ...(hasOptional ? { optionalQuestionId: ids.optional } : {}),
-    answers: answerEntries,
+    displayName: input.displayName,
+    relationName: input.relationName,
+    bouquetTypeId: input.bouquetTypeId,
+    answers: entries,
   };
 };
 
@@ -77,26 +89,35 @@ export default function QuestionStepPage() {
 
   const stepRaw = Number(params?.step);
   const step = Number.isInteger(stepRaw) ? stepRaw : NaN;
-  const nickname =
-    searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
-  const recipient =
-    searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
+  const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
+  const recipient = searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
   const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
-  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(bouquetTypeRaw as BouquetTypeKey)
+  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(
+    bouquetTypeRaw as BouquetTypeKey,
+  )
     ? (bouquetTypeRaw as BouquetTypeKey)
     : null;
+  const bouquetTypeIdRaw = Number(searchParams.get("bouquetTypeId"));
+  const bouquetTypeId =
+    Number.isInteger(bouquetTypeIdRaw) && bouquetTypeIdRaw > 0
+      ? bouquetTypeIdRaw
+      : null;
 
   const isValid =
     Number.isInteger(step) &&
     step >= 1 &&
     step <= TOTAL_STEPS &&
-    bouquetTypeKey !== null;
+    bouquetTypeKey !== null &&
+    bouquetTypeId !== null;
 
   useEffect(() => {
     if (!isValid) router.replace("/bouquet/create");
   }, [isValid, router]);
 
-  const { answers, setAnswer, clearAnswers } = useBouquetAnswers();
+  const { answers, setAnswer } = useBouquetAnswers();
+  const { setResult } = useBouquetCreationResult();
+  const { data: landingQuestions } = useLandingQuestionsQuery();
+  const createBouquet = useCreateBouquetMutation();
 
   const visual = useMemo(
     () =>
@@ -109,51 +130,77 @@ export default function QuestionStepPage() {
     () => (bouquetTypeKey ? getQuestions(bouquetTypeKey) : []),
     [bouquetTypeKey],
   );
+  const questionIdByStep = useMemo(
+    () => buildQuestionIdByStep(landingQuestions),
+    [landingQuestions],
+  );
   const question = questions[step - 1];
 
-  if (!isValid || !visual || !question || !bouquetTypeKey) return null;
+  if (!isValid || !visual || !question || !bouquetTypeKey || !bouquetTypeId)
+    return null;
 
   const value = answers[step] ?? "";
   const isOptional = Boolean(question.optional);
   const isFilled = value.trim().length > 0;
+  const isSubmitting = createBouquet.isPending;
 
   const queryString = new URLSearchParams({
     nickname,
     recipient,
     bouquetType: bouquetTypeKey,
+    bouquetTypeId: String(bouquetTypeId),
   }).toString();
 
   const goToStep = (next: number) =>
     router.push(`/bouquet/create/questions/${next}?${queryString}`);
 
-  const submit = (overrideAnswers?: Record<number, string>) => {
-    const payload = buildSenderPayload({
-      partnerId: PLACEHOLDER_PARTNER_ID,
-      bouquetTypeKey,
+  const submit = async (overrideAnswers?: Record<number, string>) => {
+    const payload = buildCreateBouquetPayload({
+      displayName: nickname,
+      relationName: recipient,
+      bouquetTypeId,
       answers: overrideAnswers ?? answers,
+      questionIdByStep,
     });
-    // TODO(BE): 현재 BE의 POST /api/v1/bouquets/sender 라우트가 single slash로 등록되어 있지 않아
-    //   호출 시 404가 발생합니다. BE에서 슬래시 정정되면 아래 mutation 호출 활성화하기.
-    //   const response = await createBouquet.mutateAsync(payload);
-    //   const bouquetId = response?.data?.bouquetId;
-    if (process.env.NODE_ENV === "development") {
-      console.info("[bouquet/create] submit payload (BE 연동 대기)", payload);
+
+    if (payload.answers.length === 0) {
+      console.warn("[bouquet/create] empty payload.answers", {
+        landingQuestions,
+        questionIdByStep,
+        answersInState: overrideAnswers ?? answers,
+      });
+      toast("질문 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+      return;
     }
-    clearAnswers();
-    router.push(`/bouquet/create/share?${queryString}`);
+
+    try {
+      const response = await createBouquet.mutateAsync(payload);
+      const bouquetId = response?.data?.bouquetId;
+      const linkToken = response?.data?.linkToken;
+      if (!bouquetId || !linkToken) {
+        toast("꽃다발 생성에 실패했어요. 잠시 후 다시 시도해 주세요.");
+        return;
+      }
+      setResult({ bouquetId, linkToken });
+      router.push(`/bouquet/create/packing?${queryString}`);
+    } catch (error) {
+      console.error(error);
+      toast("꽃다발 생성에 실패했어요. 잠시 후 다시 시도해 주세요.");
+    }
   };
 
   const handleNext = () => {
-    if (!isFilled) return;
+    if (!isFilled || isSubmitting) return;
     if (step >= TOTAL_STEPS) {
-      submit();
+      void submit();
     } else {
       goToStep(step + 1);
     }
   };
 
   const handleSkip = () => {
-    submit({ ...answers, [step]: "" });
+    if (isSubmitting) return;
+    void submit({ ...answers, [step]: "" });
   };
 
   const backHref =
@@ -201,16 +248,18 @@ export default function QuestionStepPage() {
                 style={{ lineHeight: "30px" }}
               >
                 <span className="whitespace-nowrap">
-                  <span className="text-[var(--color-red-300)]">{nickname}</span>
+                  <span className="text-[var(--color-red-300)]">
+                    {nickname}
+                  </span>
                   <span className="text-[var(--color-brown-300)]">님이 </span>
                 </span>
                 <span className="whitespace-nowrap text-[var(--color-brown-300)]">
-                  {recipient}
+                  상대방
                   {question.recipientLine}
                 </span>
               </p>
               <p
-                className="typo-title-2 text-[var(--color-brown-300)]"
+                className="typo-title-2 whitespace-pre-line text-[var(--color-brown-300)]"
                 style={{ lineHeight: "30px" }}
               >
                 {question.body}
@@ -220,8 +269,7 @@ export default function QuestionStepPage() {
 
           <div className="flex flex-col gap-2 px-5">
             <p className="typo-body-3 whitespace-nowrap text-[var(--color-green-400)]">
-              <span>To. </span>
-              <span>{recipient}</span>
+              <span>To. 상대방</span>
             </p>
             <TextArea
               value={value}
@@ -245,13 +293,14 @@ export default function QuestionStepPage() {
               <Button
                 variant="outlined"
                 onClick={handleSkip}
+                disabled={isSubmitting}
                 className="h-12 flex-1 whitespace-nowrap px-3"
               >
                 넘기기
               </Button>
               <Button
                 variant="solid"
-                disabled={!isFilled}
+                disabled={!isFilled || isSubmitting}
                 onClick={handleNext}
                 className="h-12 flex-1 whitespace-nowrap px-3"
               >
@@ -261,7 +310,7 @@ export default function QuestionStepPage() {
           ) : (
             <Button
               variant="solid"
-              disabled={!isFilled}
+              disabled={!isFilled || isSubmitting}
               onClick={handleNext}
               className="h-12 w-full"
             >

@@ -12,6 +12,8 @@ import yellowTulipThumb from "@/assets/images/bouquets/yellow-tulip-thumb-flower
 import type { BouquetTypeKey } from "@/features/bouquet/types";
 
 export type BouquetVisual = {
+  /** BE bouquet_type_id (시드 기준 1..4). 매핑이 바뀌면 BE 응답으로 보정. */
+  beId: number;
   key: BouquetTypeKey;
   fallbackName: string;
   fallbackDescription: string;
@@ -23,6 +25,7 @@ export type BouquetVisual = {
 
 export const BOUQUET_VISUALS: BouquetVisual[] = [
   {
+    beId: 1,
     key: "YELLOW_TULIP",
     fallbackName: "기억의 노란 튤립",
     fallbackDescription: "둘만 아는 소중한 순간의 질문이 나타나요",
@@ -32,6 +35,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     accentColor: "var(--color-point-yellow)",
   },
   {
+    beId: 2,
     key: "RED_CARNATION",
     fallbackName: "감사의 붉은 카네이션",
     fallbackDescription: "고마움과 따뜻한 마음의 질문이 나타나요",
@@ -41,6 +45,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     accentColor: "var(--color-point-red)",
   },
   {
+    beId: 3,
     key: "BLUE_LILY",
     fallbackName: "이해의 푸른 백합",
     fallbackDescription: "미처 나누지 못했던 마음의 질문이 나타나요",
@@ -50,6 +55,7 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     accentColor: "var(--color-point-blue)",
   },
   {
+    beId: 4,
     key: "PINK_GERBERA",
     fallbackName: "속 마음의 분홍 거베라",
     fallbackDescription: "몰랐던 서로의 마음의 질문이 나타나요",
@@ -59,3 +65,9 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     accentColor: "var(--color-point-pink)",
   },
 ];
+
+export const getBouquetVisualByKey = (key: BouquetTypeKey) =>
+  BOUQUET_VISUALS.find((visual) => visual.key === key);
+
+export const getBouquetVisualById = (id: number) =>
+  BOUQUET_VISUALS.find((visual) => visual.beId === id);

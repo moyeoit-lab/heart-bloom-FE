@@ -50,14 +50,17 @@ export type BouquetTypeListResponse = {
   message?: string;
 };
 
-// ── GET /api/v1/questions/landing
+// ── GET /api/v1/bouquets/links/{token}/questions (게스트 수신자용)
+// ── GET /api/v1/bouquet/{bouquetId}/questions (로그인 사용자 본인 꽃다발용)
+// 두 API 모두 (questionId, title, answerType) 동일한 형태 (꽃다발 타입 기준 5개).
+// (구) /api/v1/questions/landing은 BE 상태 확인용으로만 유지, FE 미사용.
 export type LandingQuestion = {
   questionId: number;
   title: string;
   answerType: LandingAnswerType;
 };
 
-export type LandingQuestionsResponse = {
+export type BouquetQuestionsResponse = {
   success?: boolean;
   data?: { questions?: LandingQuestion[] };
   message?: string;
@@ -131,6 +134,24 @@ export type BouquetQuestionAnswersResponse = {
 export type CompleteBouquetRequest = {
   receiverName: string;
   answers: CreateBouquetAnswer[];
+};
+
+// ── GET /api/v1/bouquet (꽃다발 진열대 — 발신/수신 꽃다발 목록)
+export type BouquetShelfItem = {
+  bouquetId: number;
+  bouquetTypeId: number;
+  bouquetName?: string;
+  createdAt?: string;
+};
+
+export type BouquetShelfResponse = {
+  success?: boolean;
+  data?: {
+    senderName?: string;
+    sentBouquets?: BouquetShelfItem[];
+    receivedBouquets?: BouquetShelfItem[];
+  };
+  message?: string;
 };
 
 // ── POST /api/v1/bouquets/links/{token}/claim

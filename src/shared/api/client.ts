@@ -32,7 +32,11 @@ export const apiRequest = async <T>(
   });
 
   if (!response.ok) {
-    throw new Error(`API request failed: ${response.status}`);
+    // BE 에러 메시지를 그대로 노출 — 디버깅에 필수.
+    const text = await response.text().catch(() => "");
+    throw new Error(
+      `API request failed: ${response.status} ${path}${text ? ` — ${text}` : ""}`,
+    );
   }
 
   return (await response.json()) as T;

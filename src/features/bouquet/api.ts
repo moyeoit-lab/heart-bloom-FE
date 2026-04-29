@@ -8,13 +8,15 @@ import type {
   BouquetLinkUrlResponse,
   BouquetQuestionAnswers,
   BouquetQuestionAnswersResponse,
+  BouquetQuestionsResponse,
+  BouquetShelfItem,
+  BouquetShelfResponse,
   BouquetType,
   BouquetTypeListResponse,
   CompleteBouquetRequest,
   CreateBouquetRequest,
   CreateBouquetResponse,
   LandingQuestion,
-  LandingQuestionsResponse,
 } from "@/features/bouquet/types";
 
 export const fetchBouquetCount = async (baseUrl: string) => {
@@ -35,12 +37,27 @@ export const fetchBouquetTypes = async (
   return response?.data ?? [];
 };
 
-export const fetchLandingQuestions = async (
+// 로그인 사용자의 본인 꽃다발 질문 조회.
+// 권한: 해당 꽃다발의 USER 발신자 또는 USER 수신자만 허용 (BE에서 검증).
+export const fetchMyBouquetQuestions = async (
   baseUrl: string,
+  bouquetId: number,
 ): Promise<LandingQuestion[]> => {
-  const response = await apiRequest<LandingQuestionsResponse>(
+  const response = await apiRequest<BouquetQuestionsResponse>(
     baseUrl,
-    "/api/v1/questions/landing",
+    `/api/v1/bouquet/${bouquetId}/questions`,
+  );
+  return response?.data?.questions ?? [];
+};
+
+// 비로그인 수신자가 공유 링크 토큰으로 질문 조회.
+export const fetchReceiverBouquetQuestions = async (
+  baseUrl: string,
+  token: string,
+): Promise<LandingQuestion[]> => {
+  const response = await apiRequest<BouquetQuestionsResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}/questions`,
   );
   return response?.data?.questions ?? [];
 };
@@ -125,7 +142,10 @@ export const fetchBouquetShelf = async (
   sentBouquets: BouquetShelfItem[];
   receivedBouquets: BouquetShelfItem[];
 }> => {
-  const response = await apiRequest<BouquetShelfResponse>(baseUrl, "/api/v1/bouquet");
+  const response = await apiRequest<BouquetShelfResponse>(
+    baseUrl,
+    "/api/v1/bouquet",
+  );
   return {
     senderName: response?.data?.senderName ?? "",
     sentBouquets: response?.data?.sentBouquets ?? [],

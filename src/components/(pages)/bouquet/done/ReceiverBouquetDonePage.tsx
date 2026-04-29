@@ -26,7 +26,10 @@ import yellowRequiredOn from "@/assets/images/bouquet-done/yellow-required-on.sv
 import { Button } from "@/components/Button";
 import BouquetFlowerDetailOverlay from "@/components/(pages)/bouquet/done/BouquetFlowerDetailOverlay";
 import { Switch } from "@/components/Switch";
-import type { BouquetTypeKey } from "@/features/bouquet";
+import {
+  useReceiverBouquetQuestionsQuery,
+  type BouquetTypeKey,
+} from "@/features/bouquet";
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 
 const PAGE_WIDTH = 375;
@@ -182,8 +185,15 @@ export default function ReceiverBouquetDonePage() {
     ? (bouquetTypeRaw as BouquetTypeKey)
     : DEFAULT_BOUQUET_KEY;
 
-  // TODO(데이터): 실제 답변 데이터에서 hasOptional 도출. 지금은 query로 임시 제어.
-  const hasOptional = searchParams.get("hasOptional") !== "false";
+  // 다른 프엔이 만들 진입/답변 페이지에서 URL ?token=xxx 로 넘겨줄 예정.
+  // 토큰이 있으면 BE 응답으로 검증·hasOptional 도출, 없으면 placeholder 모드.
+  const token = searchParams.get("token")?.trim() || undefined;
+  const { data: receiverQuestions } = useReceiverBouquetQuestionsQuery(token);
+
+  // BE 응답에 OPTIONAL answerType이 있으면 옵셔널 답변 존재. 토큰 없으면 URL 쿼리로 폴백.
+  const hasOptional = receiverQuestions
+    ? receiverQuestions.some((q) => q.answerType === "OPTIONAL")
+    : searchParams.get("hasOptional") !== "false";
 
   const [showMessages, setShowMessages] = useState(true);
   const [activeStep, setActiveStep] = useState<number | null>(null);
@@ -195,6 +205,7 @@ export default function ReceiverBouquetDonePage() {
     activeStep !== null ? getQuestionByStep(bouquetTypeKey, activeStep) : null;
   const activeTitle =
     activeQuestion?.detailTitle ?? activeQuestion?.subjectTitle ?? "";
+  const activeQuestionId = activeQuestion?.questionId;
 
   const handleShare = () => {
     // TODO: 공유 동작 (kakao share / 링크 복사)
@@ -377,9 +388,8 @@ export default function ReceiverBouquetDonePage() {
           step={activeStep}
           title={activeTitle}
           receiverName={receiverName}
-          // TODO(데이터): 실제 답변 페이로드 연결.
-          senderAnswer=""
-          receiverAnswer=""
+          token={token}
+          questionId={activeQuestionId}
           onClose={() => setActiveStep(null)}
         />
       ) : null}

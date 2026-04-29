@@ -49,9 +49,14 @@ const getBouquetTypeFromId = (bouquetTypeId: number): BouquetType => {
 };
 
 const mapBouquetsToCardTypes = (bouquets: BouquetShelfItem[]): BouquetType[] =>
-  bouquets.slice(0, MAX_BOUQUET_COUNT).map((bouquet) => getBouquetTypeFromId(bouquet.bouquetTypeId));
+  bouquets
+    .slice(0, MAX_BOUQUET_COUNT)
+    .map((bouquet) => getBouquetTypeFromId(bouquet.bouquetTypeId));
 
-const buildDisplayCards = (prefix: string, bouquetTypes: BouquetType[]): BouquetCard[] =>
+const buildDisplayCards = (
+  prefix: string,
+  bouquetTypes: BouquetType[],
+): BouquetCard[] =>
   Array.from({ length: MAX_BOUQUET_COUNT }, (_, index) => ({
     id: `${prefix}-${index + 1}`,
     bouquetType: bouquetTypes[index] ?? "empty",
@@ -64,8 +69,12 @@ export default function BouquetShelfPage() {
   const nickname = bouquetShelfData?.senderName?.trim() || "";
 
   const cards = useMemo(() => {
-    const sentBouquetTypes = mapBouquetsToCardTypes(bouquetShelfData?.sentBouquets ?? []);
-    const receivedBouquetTypes = mapBouquetsToCardTypes(bouquetShelfData?.receivedBouquets ?? []);
+    const sentBouquetTypes = mapBouquetsToCardTypes(
+      bouquetShelfData?.sentBouquets ?? [],
+    );
+    const receivedBouquetTypes = mapBouquetsToCardTypes(
+      bouquetShelfData?.receivedBouquets ?? [],
+    );
 
     if (activeTab === "sent") {
       return buildDisplayCards("sent", sentBouquetTypes);
@@ -91,7 +100,7 @@ export default function BouquetShelfPage() {
             <span className="h-2 w-2 rounded-full bg-[var(--color-point-yellow)]" />
           </div>
           <div className="flex items-center gap-1 rounded-xs bg-[var(--color-brown-400)] px-4 py-2">
-          <Image src={heartBloomIcon} alt="마음 꽃집" aria-hidden />
+            <Image src={heartBloomIcon} alt="마음 꽃집" aria-hidden />
           </div>
         </div>
       </header>
@@ -100,7 +109,9 @@ export default function BouquetShelfPage() {
         <div className="flex flex-col gap-2 pb-4 pt-3">
           <div className="typo-title-2 flex flex-wrap items-end">
             <span className="text-[var(--color-green-500)]">{nickname}</span>
-            <span className="text-[var(--color-brown-300)]">님의 꽃다발 진열대</span>
+            <span className="text-[var(--color-brown-300)]">
+              님의 꽃다발 진열대
+            </span>
           </div>
           <p className="typo-body-2 text-[var(--color-brown-200)]">
             그동안 만들고 받았던 꽃다발을 확인할 수 있어요.
@@ -136,7 +147,10 @@ export default function BouquetShelfPage() {
 
         <div className="mt-4 grid flex-1 auto-rows-[193px] grid-cols-2 gap-4 overflow-y-auto pb-28">
           {cards.map((card) => (
-            <div key={card.id} className="flex h-[193px] items-center justify-center">
+            <div
+              key={card.id}
+              className="flex h-[193px] items-center justify-center"
+            >
               <Image
                 src={BOUQUET_IMAGE_BY_TYPE[card.bouquetType]}
                 alt=""

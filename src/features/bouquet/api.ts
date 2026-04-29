@@ -1,11 +1,15 @@
 import { apiRequest } from "@/shared/api/client";
 
 import type {
+  BouquetAlertItem,
+  BouquetAlertsResponse,
   ApiVoidResponse,
   BouquetCountResponse,
   BouquetForReceiver,
   BouquetForReceiverResponse,
   BouquetLinkUrlResponse,
+  BouquetLinkQuestion,
+  BouquetLinkQuestionsResponse,
   BouquetQuestionAnswers,
   BouquetQuestionAnswersResponse,
   BouquetShelfItem,
@@ -93,6 +97,26 @@ export const fetchBouquetQuestionAnswers = async (
   return response?.data;
 };
 
+export const fetchBouquetLinkQuestions = async (
+  baseUrl: string,
+  token: string,
+): Promise<BouquetLinkQuestion[]> => {
+  const response = await apiRequest<BouquetLinkQuestionsResponse>(
+    baseUrl,
+    `/api/v1/bouquets/links/${encodeURIComponent(token)}/questions`,
+  );
+  const data = response?.data as
+    | BouquetLinkQuestionsResponse["data"]
+    | BouquetLinkQuestion[]
+    | undefined;
+
+  if (Array.isArray(data)) {
+    return data;
+  }
+
+  return data?.questions ?? [];
+};
+
 export const claimBouquetLink = async (
   baseUrl: string,
   token: string,
@@ -133,4 +157,25 @@ export const fetchBouquetShelf = async (
     sentBouquets: response?.data?.sentBouquets ?? [],
     receivedBouquets: response?.data?.receivedBouquets ?? [],
   };
+};
+
+export const fetchBouquetAlerts = async (
+  baseUrl: string,
+): Promise<BouquetAlertItem[]> => {
+  const response = await apiRequest<BouquetAlertsResponse>(
+    baseUrl,
+    "/api/v1/bouquet-alerts",
+  );
+  return response?.data?.alerts ?? [];
+};
+
+export const readBouquetAlert = async (
+  baseUrl: string,
+  alertId: number,
+): Promise<ApiVoidResponse> => {
+  return apiRequest<ApiVoidResponse>(
+    baseUrl,
+    `/api/v1/bouquet-alerts/${alertId}/read`,
+    { method: "PATCH" },
+  );
 };

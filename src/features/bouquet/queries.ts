@@ -1,8 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 
 import {
+  fetchBouquetAlerts,
   fetchBouquetByLink,
   fetchBouquetCount,
+  fetchBouquetLinkQuestions,
   fetchBouquetLinkUrl,
   fetchBouquetQuestionAnswers,
   fetchBouquetShelf,
@@ -18,6 +20,16 @@ export const useBouquetCountQuery = () => {
     queryKey: bouquetKeys.count(apiUrl),
     queryFn: () => fetchBouquetCount(apiUrl as string),
     enabled: Boolean(apiUrl),
+  });
+};
+
+export const useBouquetAlertsQuery = (enabled = true) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.alerts(apiUrl),
+    queryFn: () => fetchBouquetAlerts(apiUrl as string),
+    enabled: Boolean(apiUrl) && enabled,
   });
 };
 
@@ -67,6 +79,16 @@ export const useBouquetByLinkQuery = (token: string | undefined) => {
   return useQuery({
     queryKey: bouquetKeys.byLink(apiUrl, token),
     queryFn: () => fetchBouquetByLink(apiUrl as string, token as string),
+    enabled: Boolean(apiUrl) && Boolean(token),
+  });
+};
+
+export const useBouquetLinkQuestionsQuery = (token: string | undefined) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.linkQuestions(apiUrl, token),
+    queryFn: () => fetchBouquetLinkQuestions(apiUrl as string, token as string),
     enabled: Boolean(apiUrl) && Boolean(token),
   });
 };

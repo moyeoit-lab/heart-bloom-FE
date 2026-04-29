@@ -9,16 +9,17 @@ import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { TextArea } from "@/components/TextArea";
 import {
   useBouquetQuestionAnswersQuery,
-  useLandingQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
+import { pickQuestionFlowerIcon } from "@/shared/constants/questionFlowerIcons";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 375;
 const TEXTAREA_ROWS = 8;
+const ICON_SIZE = 67;
 const REQUIRED_STEPS = 4;
 const DEFAULT_NICKNAME = "이름";
 
@@ -64,12 +65,6 @@ export default function FlowerDetailPage() {
   const { answers } = useBouquetAnswers();
   const { result } = useBouquetCreationResult();
   const linkToken = result?.linkToken;
-  const { data: landingQuestions } = useLandingQuestionsQuery();
-  const questionIdForStep = landingQuestions?.[step - 1]?.questionId;
-  const { data: questionAnswers } = useBouquetQuestionAnswersQuery(
-    linkToken,
-    questionIdForStep,
-  );
 
   const visual = useMemo(
     () =>
@@ -81,6 +76,10 @@ export default function FlowerDetailPage() {
   const question = bouquetTypeKey
     ? getQuestionByStep(bouquetTypeKey, step)
     : undefined;
+  const { data: questionAnswers } = useBouquetQuestionAnswersQuery(
+    linkToken,
+    question?.questionId,
+  );
 
   if (!isValid || !visual || !question || !bouquetTypeKey) return null;
 
@@ -113,12 +112,14 @@ export default function FlowerDetailPage() {
       <section className="flex flex-col items-center gap-3 px-5 pb-6">
         <div
           aria-hidden
-          className="flex h-20 w-20 items-center justify-center rounded-full"
-          style={{ backgroundColor: visual.bgColor }}
+          className="relative"
+          style={{ width: ICON_SIZE, height: ICON_SIZE }}
         >
-          <span
-            className="block h-12 w-12 rounded-full"
-            style={{ backgroundColor: visual.accentColor }}
+          <Image
+            src={pickQuestionFlowerIcon(bouquetTypeKey, step)}
+            alt=""
+            fill
+            sizes={`${ICON_SIZE}px`}
           />
         </div>
         <h1 className="typo-title-3 text-center text-[var(--color-brown-300)]">

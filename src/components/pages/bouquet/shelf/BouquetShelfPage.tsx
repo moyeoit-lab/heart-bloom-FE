@@ -48,13 +48,12 @@ const getBouquetTypeFromId = (bouquetTypeId: number): BouquetType => {
   }
 };
 
-const mapBouquetsToCardTypes = (bouquets: BouquetShelfItem[]): BouquetType[] =>
-  bouquets.slice(0, MAX_BOUQUET_COUNT).map((bouquet) => getBouquetTypeFromId(bouquet.bouquetTypeId));
-
-const buildDisplayCards = (prefix: string, bouquetTypes: BouquetType[]): BouquetCard[] =>
+const buildDisplayCards = (prefix: string, bouquets: BouquetShelfItem[]): BouquetCard[] =>
   Array.from({ length: MAX_BOUQUET_COUNT }, (_, index) => ({
     id: `${prefix}-${index + 1}`,
-    bouquetType: bouquetTypes[index] ?? "empty",
+    bouquetType: bouquets[index]
+      ? getBouquetTypeFromId(bouquets[index].bouquetTypeId)
+      : "empty",
   }));
 
 export default function BouquetShelfPage() {
@@ -64,13 +63,10 @@ export default function BouquetShelfPage() {
   const nickname = bouquetShelfData?.senderName?.trim() || "";
 
   const cards = useMemo(() => {
-    const sentBouquetTypes = mapBouquetsToCardTypes(bouquetShelfData?.sentBouquets ?? []);
-    const receivedBouquetTypes = mapBouquetsToCardTypes(bouquetShelfData?.receivedBouquets ?? []);
-
     if (activeTab === "sent") {
-      return buildDisplayCards("sent", sentBouquetTypes);
+      return buildDisplayCards("sent", bouquetShelfData?.sentBouquets ?? []);
     }
-    return buildDisplayCards("received", receivedBouquetTypes);
+    return buildDisplayCards("received", bouquetShelfData?.receivedBouquets ?? []);
   }, [activeTab, bouquetShelfData]);
 
   return (

@@ -12,11 +12,9 @@ import { TextArea } from "@/components/TextArea";
 import { toast } from "@/components/Toast";
 import {
   useCreateBouquetMutation,
-  useLandingQuestionsQuery,
   type BouquetTypeKey,
   type CreateBouquetAnswer,
   type CreateBouquetRequest,
-  type LandingQuestion,
 } from "@/features/bouquet";
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
@@ -35,44 +33,27 @@ const VALID_BOUQUET_KEYS = new Set<BouquetTypeKey>(
   BOUQUET_VISUALS.map((visual) => visual.key),
 );
 
-// step(1..5) → questionId.
-// landing questions 응답이 sortOrder 순으로 정렬돼 있다고 가정하고 인덱스로 매칭.
-const buildQuestionIdByStep = (
-  questions: LandingQuestion[] | undefined,
-): Record<number, number> => {
-  if (!questions) return {};
-  const map: Record<number, number> = {};
-  for (let i = 0; i < TOTAL_STEPS; i += 1) {
-    const q = questions[i];
-    if (q?.questionId !== undefined) map[i + 1] = q.questionId;
-  }
-  return map;
-};
-
 const buildCreateBouquetPayload = (input: {
   displayName: string;
   relationName: string;
   bouquetTypeId: number;
+  bouquetTypeKey: BouquetTypeKey;
   answers: Record<number, string>;
-  questionIdByStep: Record<number, number>;
 }): CreateBouquetRequest => {
-  const entries: CreateBouquetAnswer[] = Array.from(
-    { length: TOTAL_STEPS },
-    (_, index): CreateBouquetAnswer | null => {
-      const step = index + 1;
-      const questionId = input.questionIdByStep[step];
-      if (questionId === undefined) return null;
-      const answer = input.answers[step] ?? "";
+  const questions = getQuestions(input.bouquetTypeKey);
+  const entries: CreateBouquetAnswer[] = questions
+    .map((q): CreateBouquetAnswer | null => {
+      const answer = input.answers[q.step] ?? "";
       if (answer.trim().length === 0) return null;
       return {
-        questionId,
+        questionId: q.questionId,
         // 메모리 컨벤션: 모든 질문 주관식 고정.
         answerType: "SUBJECTIVE",
         answer,
-        sortOrder: step,
+        sortOrder: q.step,
       };
-    },
-  ).filter((entry): entry is CreateBouquetAnswer => entry !== null);
+    })
+    .filter((entry): entry is CreateBouquetAnswer => entry !== null);
 
   return {
     displayName: input.displayName,
@@ -116,7 +97,6 @@ export default function QuestionStepPage() {
 
   const { answers, setAnswer } = useBouquetAnswers();
   const { setResult } = useBouquetCreationResult();
-  const { data: landingQuestions } = useLandingQuestionsQuery();
   const createBouquet = useCreateBouquetMutation();
 
   const visual = useMemo(
@@ -129,10 +109,6 @@ export default function QuestionStepPage() {
   const questions = useMemo(
     () => (bouquetTypeKey ? getQuestions(bouquetTypeKey) : []),
     [bouquetTypeKey],
-  );
-  const questionIdByStep = useMemo(
-    () => buildQuestionIdByStep(landingQuestions),
-    [landingQuestions],
   );
   const question = questions[step - 1];
 
@@ -159,17 +135,16 @@ export default function QuestionStepPage() {
       displayName: nickname,
       relationName: recipient,
       bouquetTypeId,
+      bouquetTypeKey,
       answers: overrideAnswers ?? answers,
-      questionIdByStep,
     });
 
     if (payload.answers.length === 0) {
       console.warn("[bouquet/create] empty payload.answers", {
-        landingQuestions,
-        questionIdByStep,
+        bouquetTypeKey,
         answersInState: overrideAnswers ?? answers,
       });
-      toast("질문 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
+      toast("입력된 답변이 없어요. 한 개 이상 작성해 주세요.");
       return;
     }
 

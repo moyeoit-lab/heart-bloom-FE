@@ -6,8 +6,10 @@ export {
   fetchBouquetCount,
   fetchBouquetLinkUrl,
   fetchBouquetQuestionAnswers,
+  fetchBouquetShelf,
   fetchBouquetTypes,
-  fetchLandingQuestions,
+  fetchMyBouquetQuestions,
+  fetchReceiverBouquetQuestions,
 } from "@/features/bouquet/api";
 export { bouquetKeys } from "@/features/bouquet/keys";
 export {
@@ -20,8 +22,10 @@ export {
   useBouquetCountQuery,
   useBouquetLinkUrlQuery,
   useBouquetQuestionAnswersQuery,
+  useBouquetShelfQuery,
   useBouquetTypesQuery,
-  useLandingQuestionsQuery,
+  useMyBouquetQuestionsQuery,
+  useReceiverBouquetQuestionsQuery,
 } from "@/features/bouquet/queries";
 export type {
   AnswerType,
@@ -35,7 +39,10 @@ export type {
   BouquetLinkUrlResponse,
   BouquetQuestionAnswers,
   BouquetQuestionAnswersResponse,
+  BouquetQuestionsResponse,
   BouquetReceiverType,
+  BouquetShelfItem,
+  BouquetShelfResponse,
   BouquetSenderType,
   BouquetStatus,
   BouquetType,
@@ -47,6 +54,5 @@ export type {
   CreateBouquetResponse,
   LandingAnswerType,
   LandingQuestion,
-  LandingQuestionsResponse,
   RespondentType,
 } from "@/features/bouquet/types";

@@ -7,7 +7,8 @@ import {
   fetchBouquetQuestionAnswers,
   fetchBouquetShelf,
   fetchBouquetTypes,
-  fetchLandingQuestions,
+  fetchMyBouquetQuestions,
+  fetchReceiverBouquetQuestions,
 } from "@/features/bouquet/api";
 import { bouquetKeys } from "@/features/bouquet/keys";
 
@@ -41,12 +42,13 @@ export const useBouquetTypesQuery = () => {
   });
 };
 
-export const useLandingQuestionsQuery = () => {
+// 진열대 — 발신/수신 꽃다발 목록.
+export const useBouquetShelfQuery = () => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   return useQuery({
-    queryKey: bouquetKeys.landingQuestions(apiUrl),
-    queryFn: () => fetchLandingQuestions(apiUrl as string),
+    queryKey: bouquetKeys.shelf(apiUrl),
+    queryFn: () => fetchBouquetShelf(apiUrl as string),
     enabled: Boolean(apiUrl),
   });
 };
@@ -86,5 +88,29 @@ export const useBouquetQuestionAnswersQuery = (
         questionId as number,
       ),
     enabled: Boolean(apiUrl) && Boolean(token) && Boolean(questionId),
+  });
+};
+
+// 로그인 사용자가 본인 꽃다발의 질문 목록 조회.
+export const useMyBouquetQuestionsQuery = (bouquetId: number | undefined) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.myBouquetQuestions(apiUrl, bouquetId),
+    queryFn: () =>
+      fetchMyBouquetQuestions(apiUrl as string, bouquetId as number),
+    enabled: Boolean(apiUrl) && Boolean(bouquetId),
+  });
+};
+
+// 비로그인 수신자가 공유 링크 토큰으로 질문 목록 조회.
+export const useReceiverBouquetQuestionsQuery = (token: string | undefined) => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.receiverBouquetQuestions(apiUrl, token),
+    queryFn: () =>
+      fetchReceiverBouquetQuestions(apiUrl as string, token as string),
+    enabled: Boolean(apiUrl) && Boolean(token),
   });
 };

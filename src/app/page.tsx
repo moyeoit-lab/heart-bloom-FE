@@ -1,5 +1,6 @@
 import Footer from "@/components/Footer";
 import HomeActionSection from "@/components/(pages)/home/HomeActionSection";
+import BouquetAlertOverlay from "@/components/(pages)/home/BouquetAlertOverlay";
 
 export default function Home() {
   return (
@@ -36,6 +37,7 @@ export default function Home() {
         <HomeActionSection />
         <Footer />
       </section>
+      <BouquetAlertOverlay />
     </main>
   );
 }

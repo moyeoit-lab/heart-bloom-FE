@@ -8,6 +8,8 @@ import type {
   BouquetLinkUrlResponse,
   BouquetQuestionAnswers,
   BouquetQuestionAnswersResponse,
+  BouquetShelfItem,
+  BouquetShelfResponse,
   BouquetType,
   BouquetTypeListResponse,
   CompleteBouquetRequest,

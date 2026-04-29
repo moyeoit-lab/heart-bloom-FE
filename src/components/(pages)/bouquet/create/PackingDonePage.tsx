@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import downloadIcon from "@/assets/icons/download-icon.svg";
 import homeIcon from "@/assets/icons/home-icon.svg";
@@ -79,6 +79,82 @@ type FlowerClickRegion = {
   height: number;
 };
 
+type KakaoShareArgs = {
+  objectType: "feed";
+  content: {
+    title: string;
+    description: string;
+    imageUrl: string;
+    link: {
+      mobileWebUrl: string;
+      webUrl: string;
+    };
+  };
+  buttons: Array<{
+    title: string;
+    link: {
+      mobileWebUrl: string;
+      webUrl: string;
+    };
+  }>;
+};
+
+type KakaoSdk = {
+  isInitialized: () => boolean;
+  init: (appKey: string) => void;
+  Share: {
+    sendDefault: (args: KakaoShareArgs) => void;
+  };
+};
+
+declare global {
+  interface Window {
+    Kakao?: KakaoSdk;
+  }
+}
+
+const KAKAO_SDK_ID = "kakao-js-sdk";
+const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js";
+
+const loadKakaoSdk = async (): Promise<KakaoSdk> => {
+  if (typeof window === "undefined") {
+    throw new Error("브라우저 환경에서만 카카오 SDK를 사용할 수 있습니다.");
+  }
+
+  if (window.Kakao) {
+    return window.Kakao;
+  }
+
+  await new Promise<void>((resolve, reject) => {
+    const existingScript = document.getElementById(
+      KAKAO_SDK_ID,
+    ) as HTMLScriptElement | null;
+
+    const onLoad = () => resolve();
+    const onError = () => reject(new Error("카카오 SDK 로드에 실패했어요."));
+
+    if (existingScript) {
+      existingScript.addEventListener("load", onLoad, { once: true });
+      existingScript.addEventListener("error", onError, { once: true });
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = KAKAO_SDK_ID;
+    script.src = KAKAO_SDK_URL;
+    script.async = true;
+    script.onload = onLoad;
+    script.onerror = onError;
+    document.head.appendChild(script);
+  });
+
+  if (!window.Kakao) {
+    throw new Error("카카오 SDK가 준비되지 않았어요.");
+  }
+
+  return window.Kakao;
+};
+
 // 좌표는 mini SVG의 viewBox(375×812) 기준. 배열 인덱스 = 질문 step - 1.
 const FLOWER_CLICK_REGIONS: Record<BouquetTypeKey, FlowerClickRegion[]> = {
   YELLOW_TULIP: [
@@ -122,11 +198,37 @@ export default function PackingDonePage() {
   const heroSrc = showMessages ? visual.miniA : visual.miniQ;
   const flowerRegions = FLOWER_CLICK_REGIONS[bouquetTypeKey];
   const questions = getQuestions(bouquetTypeKey);
+  const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
 
   const { result } = useBouquetCreationResult();
   const bouquetId = result?.bouquetId;
   const { data: shareUrl, isPending: isShareUrlPending } =
     useBouquetLinkUrlQuery(bouquetId);
+
+  useEffect(() => {
+    if (!kakaoJsKey) {
+      return;
+    }
+
+    let cancelled = false;
+
+    loadKakaoSdk()
+      .then((kakao) => {
+        if (cancelled) {
+          return;
+        }
+        if (!kakao.isInitialized()) {
+          kakao.init(kakaoJsKey);
+        }
+      })
+      .catch((error: unknown) => {
+        console.error(error);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [kakaoJsKey]);
 
   const handleFlowerClick = (step: number) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -138,7 +240,40 @@ export default function PackingDonePage() {
       toast("공유 링크를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.");
       return;
     }
+
     try {
+      if (kakaoJsKey) {
+        const kakao = await loadKakaoSdk();
+
+        if (!kakao.isInitialized()) {
+          kakao.init(kakaoJsKey);
+        }
+
+        const imageUrl = new URL("/images/home.png", window.location.origin).toString();
+        kakao.Share.sendDefault({
+          objectType: "feed",
+          content: {
+            title: `${nickname}님의 꽃다발`,
+            description: `${recipient}에게 꽃다발 링크를 공유해보세요.`,
+            imageUrl,
+            link: {
+              mobileWebUrl: shareUrl,
+              webUrl: shareUrl,
+            },
+          },
+          buttons: [
+            {
+              title: "꽃다발 보러 가기",
+              link: {
+                mobileWebUrl: shareUrl,
+                webUrl: shareUrl,
+              },
+            },
+          ],
+        });
+        return;
+      }
+
       if (navigator.share) {
         await navigator.share({ url: shareUrl });
         return;

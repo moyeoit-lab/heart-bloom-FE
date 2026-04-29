@@ -29,8 +29,6 @@ import { Switch } from "@/components/Switch";
 import { toast } from "@/components/Toast";
 import {
   useBouquetLinkQuestionsQuery,
-  useBouquetQuestionAnswersQuery,
-import {
   useReceiverBouquetQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
@@ -178,7 +176,6 @@ const NOTE_HOTSPOT_BY_TYPE: Partial<Record<BouquetTypeKey, FlowerHotspot>> = {
 export default function ReceiverBouquetDonePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const token = searchParams.get("token")?.trim();
   const senderName = searchParams.get("senderName")?.trim() || DEFAULT_NICKNAME;
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
@@ -218,13 +215,6 @@ export default function ReceiverBouquetDonePage() {
   });
   const activeQuestionId =
     activeStep !== null ? sortedQuestions[activeStep - 1]?.questionId : undefined;
-  const { data: activeQuestionAnswers } = useBouquetQuestionAnswersQuery(
-    token,
-    activeQuestionId,
-  );
-  const senderAnswerText = activeQuestionAnswers?.senderAnswer?.subjectiveContent ?? "";
-  const receiverAnswerText =
-    activeQuestionAnswers?.receiverAnswer?.subjectiveContent ?? "";
 
   const handleShare = () => {
     if (typeof window === "undefined") {
@@ -430,8 +420,6 @@ export default function ReceiverBouquetDonePage() {
           step={activeStep}
           title={activeTitle}
           receiverName={receiverName}
-          senderAnswer={senderAnswerText}
-          receiverAnswer={receiverAnswerText}
           token={token}
           questionId={activeQuestionId}
           onClose={() => setActiveStep(null)}

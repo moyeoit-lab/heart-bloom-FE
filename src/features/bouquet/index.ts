@@ -10,7 +10,6 @@ export {
   fetchBouquetQuestionAnswers,
   fetchBouquetShelf,
   fetchBouquetTypes,
-  fetchLandingQuestions,
   readBouquetAlert,
   fetchMyBouquetQuestions,
   fetchReceiverBouquetQuestions,

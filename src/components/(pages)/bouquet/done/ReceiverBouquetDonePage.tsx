@@ -30,6 +30,8 @@ import { toast } from "@/components/Toast";
 import {
   useBouquetLinkQuestionsQuery,
   useBouquetQuestionAnswersQuery,
+import {
+  useReceiverBouquetQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
@@ -188,8 +190,15 @@ export default function ReceiverBouquetDonePage() {
     ? (bouquetTypeRaw as BouquetTypeKey)
     : DEFAULT_BOUQUET_KEY;
 
-  // TODO(데이터): 실제 답변 데이터에서 hasOptional 도출. 지금은 query로 임시 제어.
-  const hasOptional = searchParams.get("hasOptional") !== "false";
+  // 다른 프엔이 만들 진입/답변 페이지에서 URL ?token=xxx 로 넘겨줄 예정.
+  // 토큰이 있으면 BE 응답으로 검증·hasOptional 도출, 없으면 placeholder 모드.
+  const token = searchParams.get("token")?.trim() || undefined;
+  const { data: receiverQuestions } = useReceiverBouquetQuestionsQuery(token);
+
+  // BE 응답에 OPTIONAL answerType이 있으면 옵셔널 답변 존재. 토큰 없으면 URL 쿼리로 폴백.
+  const hasOptional = receiverQuestions
+    ? receiverQuestions.some((q) => q.answerType === "OPTIONAL")
+    : searchParams.get("hasOptional") !== "false";
 
   const [showMessages, setShowMessages] = useState(true);
   const [activeStep, setActiveStep] = useState<number | null>(null);
@@ -423,6 +432,8 @@ export default function ReceiverBouquetDonePage() {
           receiverName={receiverName}
           senderAnswer={senderAnswerText}
           receiverAnswer={receiverAnswerText}
+          token={token}
+          questionId={activeQuestionId}
           onClose={() => setActiveStep(null)}
         />
       ) : null}

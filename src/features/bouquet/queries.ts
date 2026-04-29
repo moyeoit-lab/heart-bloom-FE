@@ -5,6 +5,7 @@ import {
   fetchBouquetCount,
   fetchBouquetLinkUrl,
   fetchBouquetQuestionAnswers,
+  fetchBouquetShelf,
   fetchBouquetTypes,
   fetchLandingQuestions,
 } from "@/features/bouquet/api";
@@ -16,6 +17,16 @@ export const useBouquetCountQuery = () => {
   return useQuery({
     queryKey: bouquetKeys.count(apiUrl),
     queryFn: () => fetchBouquetCount(apiUrl as string),
+    enabled: Boolean(apiUrl),
+  });
+};
+
+export const useBouquetShelfQuery = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useQuery({
+    queryKey: bouquetKeys.list(apiUrl),
+    queryFn: () => fetchBouquetShelf(apiUrl as string),
     enabled: Boolean(apiUrl),
   });
 };

@@ -42,8 +42,7 @@ const handleUnauthorized = () => {
   window.localStorage.removeItem(ACCESS_TOKEN_KEY);
   const pathname = window.location.pathname;
   // 홈/OAuth 콜백에서 401이 떨어지면 무한 리다이렉트 방지 위해 스킵.
-  const isAuthPage =
-    pathname === "/" || pathname.startsWith("/oauth/callback");
+  const isAuthPage = pathname === "/" || pathname.startsWith("/oauth/callback");
   if (isAuthPage || isAuthRedirecting) return;
   isAuthRedirecting = true;
   window.location.replace("/?expired=1");

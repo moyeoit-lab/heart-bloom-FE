@@ -53,6 +53,23 @@ export type BouquetShelfResponse = {
   message?: string;
 };
 
+// ── GET /api/v1/bouquet-alerts
+export type BouquetAlertItem = {
+  alertId: number;
+  bouquetId: number;
+  displayName: string;
+  bouquetImageUrl: string;
+  completedAt: string;
+};
+
+export type BouquetAlertsResponse = {
+  success?: boolean;
+  data?: {
+    alerts?: BouquetAlertItem[];
+  };
+  message?: string;
+};
+
 // ── GET /api/v1/bouquet/type
 export type BouquetType = {
   id: number;
@@ -82,6 +99,22 @@ export type LandingQuestion = {
 export type BouquetQuestionsResponse = {
   success?: boolean;
   data?: { questions?: LandingQuestion[] };
+  message?: string;
+};
+
+// ── GET /api/v1/bouquets/links/{token}/questions
+export type BouquetLinkQuestion = {
+  questionId: number;
+  title: string;
+  answerType?: LandingAnswerType;
+  sortOrder?: number;
+};
+
+export type BouquetLinkQuestionsResponse = {
+  success?: boolean;
+  data?: {
+    questions?: BouquetLinkQuestion[];
+  };
   message?: string;
 };
 

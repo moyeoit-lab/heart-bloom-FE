@@ -6,6 +6,7 @@ import {
   claimBouquetLink,
   completeBouquet,
   createBouquet,
+  readBouquetAlert,
 } from "@/features/bouquet/api";
 import type {
   ApiVoidResponse,
@@ -40,5 +41,13 @@ export const useCompleteBouquetMutation = () => {
   >({
     mutationFn: ({ token, payload }) =>
       completeBouquet(apiUrl as string, token, payload),
+  });
+};
+
+export const useReadBouquetAlertMutation = () => {
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+  return useMutation<ApiVoidResponse, Error, { alertId: number }>({
+    mutationFn: ({ alertId }) => readBouquetAlert(apiUrl as string, alertId),
   });
 };

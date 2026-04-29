@@ -26,7 +26,9 @@ import yellowRequiredOn from "@/assets/images/bouquet-done/yellow-required-on.sv
 import { Button } from "@/components/Button";
 import BouquetFlowerDetailOverlay from "@/components/(pages)/bouquet/done/BouquetFlowerDetailOverlay";
 import { Switch } from "@/components/Switch";
+import { toast } from "@/components/Toast";
 import {
+  useBouquetLinkQuestionsQuery,
   useReceiverBouquetQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
@@ -205,15 +207,45 @@ export default function ReceiverBouquetDonePage() {
     activeStep !== null ? getQuestionByStep(bouquetTypeKey, activeStep) : null;
   const activeTitle =
     activeQuestion?.detailTitle ?? activeQuestion?.subjectTitle ?? "";
-  const activeQuestionId = activeQuestion?.questionId;
+  const { data: linkQuestions } = useBouquetLinkQuestionsQuery(token);
+  const sortedQuestions = [...(linkQuestions ?? [])].sort((a, b) => {
+    const aSortOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
+    const bSortOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
+    return aSortOrder - bSortOrder;
+  });
+  const activeQuestionId =
+    activeStep !== null ? sortedQuestions[activeStep - 1]?.questionId : undefined;
 
   const handleShare = () => {
-    // TODO: 공유 동작 (kakao share / 링크 복사)
-    console.info("[bouquet/receive/done] share clicked");
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const currentUrl = window.location.href;
+
+    void navigator.clipboard
+      .writeText(currentUrl)
+      .then(() => toast("현재 페이지 링크를 복사했어요."))
+      .catch((error) => {
+        console.error(error);
+        toast("링크 복사에 실패했어요. 다시 시도해 주세요.");
+      });
   };
 
   const handleCreateNew = () => {
-    router.push("/bouquet/create");
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const isLoggedIn = Boolean(window.localStorage.getItem("accessToken"));
+
+    if (isLoggedIn) {
+      router.push("/bouquet/create");
+      return;
+    }
+
+    toast("로그인 후 꽃다발을 만들 수 있어요.");
+    router.push("/");
   };
 
   const handleDownload = () => {

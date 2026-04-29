@@ -3,17 +3,27 @@ import Image from "next/image";
 import logoMini from "@/assets/images/moyeoit-logo-mini.svg";
 import logoFull from "@/assets/images/moyeoit-logo-full.svg";
 import instaIcon from "@/assets/icons/instagram-icon.svg";
+import { cn } from "@/shared/utils/cn";
 
-export default function Footer() {
+type FooterProps = {
+  className?: string;
+};
+
+export default function Footer({ className }: FooterProps) {
   return (
-    <footer className="absolute left-0 top-[791px] z-10 flex w-full flex-col gap-6 border-t border-[#e1e1e1] px-6 pb-12 pt-3">
+    <footer
+      className={cn(
+        "absolute left-0 top-[791px] z-10 flex w-full flex-col gap-6 border-t border-[#e1e1e1] px-6 pb-12 pt-3",
+        className,
+      )}
+    >
       <div className="flex w-full items-center justify-between">
         <div className="flex items-center gap-2">
           <Image src={logoMini} alt="" aria-hidden />
           <Image src={logoFull} alt="MOYEO-IT 로고" />
         </div>
         <a
-          href="https://www.instagram.com/"
+          href="https://www.instagram.com/maeum.flowershop/"
           target="_blank"
           rel="noopener noreferrer"
           aria-label="인스타그램으로 이동"

@@ -4,6 +4,8 @@ export const bouquetKeys = {
     [...bouquetKeys.all, "list", apiUrl] as const,
   count: (apiUrl: string | undefined) =>
     [...bouquetKeys.all, "count", apiUrl] as const,
+  alerts: (apiUrl: string | undefined) =>
+    [...bouquetKeys.all, "alerts", apiUrl] as const,
   types: (apiUrl: string | undefined) =>
     [...bouquetKeys.all, "types", apiUrl] as const,
   myBouquetQuestions: (
@@ -19,6 +21,8 @@ export const bouquetKeys = {
     [...bouquetKeys.all, "link-url", apiUrl, bouquetId] as const,
   byLink: (apiUrl: string | undefined, token: string | undefined) =>
     [...bouquetKeys.all, "by-link", apiUrl, token] as const,
+  linkQuestions: (apiUrl: string | undefined, token: string | undefined) =>
+    [...bouquetKeys.all, "link-questions", apiUrl, token] as const,
   questionAnswers: (
     apiUrl: string | undefined,
     token: string | undefined,

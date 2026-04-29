@@ -116,6 +116,22 @@ declare global {
 const KAKAO_SDK_ID = "kakao-js-sdk";
 const KAKAO_SDK_URL = "https://t1.kakaocdn.net/kakao_js_sdk/2.7.5/kakao.min.js";
 
+const toCurrentOriginShareUrl = (rawUrl: string): string => {
+  if (typeof window === "undefined") {
+    return rawUrl;
+  }
+
+  try {
+    const parsed = new URL(rawUrl);
+    return new URL(
+      `${parsed.pathname}${parsed.search}${parsed.hash}`,
+      window.location.origin,
+    ).toString();
+  } catch {
+    return rawUrl;
+  }
+};
+
 const loadKakaoSdk = async (): Promise<KakaoSdk> => {
   if (typeof window === "undefined") {
     throw new Error("브라우저 환경에서만 카카오 SDK를 사용할 수 있습니다.");
@@ -241,6 +257,8 @@ export default function PackingDonePage() {
       return;
     }
 
+    const shareTargetUrl = toCurrentOriginShareUrl(shareUrl);
+
     try {
       if (kakaoJsKey) {
         const kakao = await loadKakaoSdk();
@@ -257,16 +275,16 @@ export default function PackingDonePage() {
             description: `${recipient}에게 꽃다발 링크를 공유해보세요.`,
             imageUrl,
             link: {
-              mobileWebUrl: shareUrl,
-              webUrl: shareUrl,
+              mobileWebUrl: shareTargetUrl,
+              webUrl: shareTargetUrl,
             },
           },
           buttons: [
             {
               title: "꽃다발 보러 가기",
               link: {
-                mobileWebUrl: shareUrl,
-                webUrl: shareUrl,
+                mobileWebUrl: shareTargetUrl,
+                webUrl: shareTargetUrl,
               },
             },
           ],
@@ -275,10 +293,10 @@ export default function PackingDonePage() {
       }
 
       if (navigator.share) {
-        await navigator.share({ url: shareUrl });
+        await navigator.share({ url: shareTargetUrl });
         return;
       }
-      await navigator.clipboard.writeText(shareUrl);
+      await navigator.clipboard.writeText(shareTargetUrl);
       toast("공유 링크를 복사했어요.");
     } catch (error) {
       console.error(error);

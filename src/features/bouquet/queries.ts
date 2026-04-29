@@ -42,17 +42,6 @@ export const useBouquetTypesQuery = () => {
   });
 };
 
-// 진열대 — 발신/수신 꽃다발 목록.
-export const useBouquetShelfQuery = () => {
-  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
-
-  return useQuery({
-    queryKey: bouquetKeys.shelf(apiUrl),
-    queryFn: () => fetchBouquetShelf(apiUrl as string),
-    enabled: Boolean(apiUrl),
-  });
-};
-
 export const useBouquetLinkUrlQuery = (bouquetId: number | undefined) => {
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 

@@ -155,24 +155,6 @@ export type CompleteBouquetRequest = {
   answers: CreateBouquetAnswer[];
 };
 
-// ── GET /api/v1/bouquet (꽃다발 진열대 — 발신/수신 꽃다발 목록)
-export type BouquetShelfItem = {
-  bouquetId: number;
-  bouquetTypeId: number;
-  bouquetName?: string;
-  createdAt?: string;
-};
-
-export type BouquetShelfResponse = {
-  success?: boolean;
-  data?: {
-    senderName?: string;
-    sentBouquets?: BouquetShelfItem[];
-    receivedBouquets?: BouquetShelfItem[];
-  };
-  message?: string;
-};
-
 // ── POST /api/v1/bouquets/links/{token}/claim
 // ── POST /api/v1/bouquets/links/{token}/answers
 export type ApiVoidResponse = {

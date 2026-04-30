@@ -18,7 +18,7 @@ import {
   type CreateBouquetAnswer,
 } from "@/features/bouquet";
 import {
-  mapQuestionsByDetailTitles,
+  mapQuestionsByQuestionIds,
 } from "@/shared/constants/bouquetQuestions";
 import { useSessionState } from "@/shared/hooks/useSessionState";
 import QuestionStepper from "@/components/(pages)/bouquet/create/QuestionStepper";
@@ -64,7 +64,7 @@ export default function ReceiverQuestionStepPage() {
     useBouquetLinkQuestionsQuery(token);
   const questions = useMemo(() => normalizeQuestions(questionData), [questionData]);
   const mappedQuestions = useMemo(
-    () => mapQuestionsByDetailTitles(questions.map((item) => item.title)),
+    () => mapQuestionsByQuestionIds(questions.map((item) => item.questionId)),
     [questions],
   );
 

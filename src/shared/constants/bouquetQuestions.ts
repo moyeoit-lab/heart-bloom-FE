@@ -192,62 +192,10 @@ export const getQuestionByStep = (
   step: number,
 ): Question | undefined => getQuestions(bouquetTypeKey)[step - 1];
 
-const normalizeQuestionText = (value: string) =>
-  value.replace(/\s+/g, "").replace(/[?？!！.,]/g, "").trim();
-
-const ALL_QUESTIONS = Object.values(QUESTIONS_BY_SUBJECT).flat();
-
-const getQuestionMatchCandidates = (question: Question) => [
-  question.body,
-  question.subjectTitle,
-  question.detailTitle ?? "",
-];
-
-const isQuestionMatchedByTitle = (question: Question, normalizedTitle: string) =>
-  getQuestionMatchCandidates(question).some(
-    (candidate) => normalizeQuestionText(candidate) === normalizedTitle,
-  );
-
-const findMatchedQuestions = (
-  title: string,
-  candidates: Question[],
-): Question[] => {
-  const normalizedTitle = normalizeQuestionText(title);
-  return candidates.filter((question) =>
-    isQuestionMatchedByTitle(question, normalizedTitle),
-  );
-};
-
-export const inferQuestionSetByApiTitles = (
-  titles: string[],
+export const mapQuestionsByQuestionIds = (
+  questionIds: number[],
 ): Question[] | undefined => {
-  if (titles.length === 0) {
-    return undefined;
-  }
-
-  const scoredSets = Object.values(QUESTIONS_BY_SUBJECT).map((questions) => ({
-    questions,
-    score: titles.filter((title) => findMatchedQuestions(title, questions).length > 0)
-      .length,
-  }));
-
-  const bestScore = Math.max(...scoredSets.map((set) => set.score));
-  if (bestScore <= 0) {
-    return undefined;
-  }
-
-  const bestSets = scoredSets.filter((set) => set.score === bestScore);
-  if (bestSets.length !== 1) {
-    return undefined;
-  }
-
-  return bestSets[0].questions;
-};
-
-export const mapQuestionsByDetailTitles = (
-  titles: string[],
-): Question[] | undefined => {
-  if (titles.length === 0) {
+  if (questionIds.length === 0) {
     return undefined;
   }
 
@@ -256,18 +204,11 @@ export const mapQuestionsByDetailTitles = (
       const usedIndexes = new Set<number>();
       const mapped: Question[] = [];
 
-      for (const title of titles) {
-        const normalizedTitle = normalizeQuestionText(title);
-
-        const matchedIndex = questions.findIndex((question, index) => {
-          if (usedIndexes.has(index)) {
-            return false;
-          }
-
-          return (
-            normalizeQuestionText(question.detailTitle ?? "") === normalizedTitle
-          );
-        });
+      for (const questionId of questionIds) {
+        const matchedIndex = questions.findIndex(
+          (question, index) =>
+            !usedIndexes.has(index) && question.questionId === questionId,
+        );
 
         if (matchedIndex < 0) {
           return undefined;
@@ -287,26 +228,3 @@ export const mapQuestionsByDetailTitles = (
 
   return candidateSets[0];
 };
-
-export const getDisplayQuestionByApiTitle = (
-  title: string | undefined,
-  scopedQuestions?: Question[],
-): Question | undefined => {
-  if (!title) {
-    return undefined;
-  }
-
-  const candidates = scopedQuestions ?? ALL_QUESTIONS;
-  const matchedQuestions = findMatchedQuestions(title, candidates);
-
-  if (matchedQuestions.length !== 1) {
-    return undefined;
-  }
-
-  return matchedQuestions[0];
-};
-
-export const getDisplayQuestionBodyByApiTitle = (
-  title: string | undefined,
-  scopedQuestions?: Question[],
-): string | undefined => getDisplayQuestionByApiTitle(title, scopedQuestions)?.body;

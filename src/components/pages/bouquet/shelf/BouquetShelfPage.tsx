@@ -48,13 +48,19 @@ const getBouquetTypeFromId = (bouquetTypeId: number): BouquetType => {
   }
 };
 
-const buildDisplayCards = (prefix: string, bouquets: BouquetShelfItem[]): BouquetCard[] =>
-  Array.from({ length: MAX_BOUQUET_COUNT }, (_, index) => ({
+const buildDisplayCards = (
+  prefix: string,
+  bouquets: BouquetShelfItem[],
+): BouquetCard[] => {
+  const displayCount = Math.max(MAX_BOUQUET_COUNT, bouquets.length);
+
+  return Array.from({ length: displayCount }, (_, index) => ({
     id: `${prefix}-${index + 1}`,
     bouquetType: bouquets[index]
       ? getBouquetTypeFromId(bouquets[index].bouquetTypeId)
       : "empty",
   }));
+};
 
 export default function BouquetShelfPage() {
   const router = useRouter();

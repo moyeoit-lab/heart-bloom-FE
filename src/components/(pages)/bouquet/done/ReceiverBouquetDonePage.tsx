@@ -28,11 +28,16 @@ import BouquetFlowerDetailOverlay from "@/components/(pages)/bouquet/done/Bouque
 import { Switch } from "@/components/Switch";
 import { toast } from "@/components/Toast";
 import {
+  useBouquetByLinkQuery,
   useBouquetLinkQuestionsQuery,
   useReceiverBouquetQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
-import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
+import {
+  getQuestionByStep,
+  getQuestions,
+} from "@/shared/constants/bouquetQuestions";
+import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 
 const PAGE_WIDTH = 375;
 const SCENE_HEIGHT = 1023;
@@ -180,24 +185,29 @@ export default function ReceiverBouquetDonePage() {
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
 
-  const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
-  const bouquetTypeKey = VALID_BOUQUET_KEYS.has(
-    bouquetTypeRaw as BouquetTypeKey,
-  )
-    ? (bouquetTypeRaw as BouquetTypeKey)
-    : DEFAULT_BOUQUET_KEY;
-
   // 다른 프엔이 만들 진입/답변 페이지에서 URL ?token=xxx 로 넘겨줄 예정.
   // 토큰이 있으면 BE 응답으로 검증·hasOptional 도출, 없으면 placeholder 모드.
   const token = searchParams.get("token")?.trim() || undefined;
   const { data: receiverQuestions } = useReceiverBouquetQuestionsQuery(token);
+  const { data: bouquetInfo } = useBouquetByLinkQuery(token);
+
+  const bouquetTypeRaw = searchParams.get("bouquetType")?.trim() ?? "";
+  const bouquetTypeFromQuery = VALID_BOUQUET_KEYS.has(
+    bouquetTypeRaw as BouquetTypeKey,
+  )
+    ? (bouquetTypeRaw as BouquetTypeKey)
+    : undefined;
+  const bouquetTypeFromName = getBouquetVisualByName(bouquetInfo?.bouquetName)
+    ?.key;
+  const bouquetTypeKey =
+    bouquetTypeFromQuery ?? bouquetTypeFromName ?? DEFAULT_BOUQUET_KEY;
 
   // BE 응답에 OPTIONAL answerType이 있으면 옵셔널 답변 존재. 토큰 없으면 URL 쿼리로 폴백.
   const hasOptional = receiverQuestions
     ? receiverQuestions.some((q) => q.answerType === "OPTIONAL")
     : searchParams.get("hasOptional") !== "false";
 
-  const [showMessages, setShowMessages] = useState(true);
+  const [showMessages, setShowMessages] = useState(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const heroSrc = pickHero(bouquetTypeKey, hasOptional, showMessages);
 
@@ -208,10 +218,15 @@ export default function ReceiverBouquetDonePage() {
   const activeTitle =
     activeQuestion?.detailTitle ?? activeQuestion?.subjectTitle ?? "";
   const { data: linkQuestions } = useBouquetLinkQuestionsQuery(token);
+  const stepOrderByQuestionId = new Map<number, number>(
+    getQuestions(bouquetTypeKey).map((q) => [q.questionId, q.step]),
+  );
   const sortedQuestions = [...(linkQuestions ?? [])].sort((a, b) => {
-    const aSortOrder = a.sortOrder ?? Number.MAX_SAFE_INTEGER;
-    const bSortOrder = b.sortOrder ?? Number.MAX_SAFE_INTEGER;
-    return aSortOrder - bSortOrder;
+    const aOrder =
+      stepOrderByQuestionId.get(a.questionId) ?? Number.MAX_SAFE_INTEGER;
+    const bOrder =
+      stepOrderByQuestionId.get(b.questionId) ?? Number.MAX_SAFE_INTEGER;
+    return aOrder - bOrder;
   });
   const activeQuestionId =
     activeStep !== null ? sortedQuestions[activeStep - 1]?.questionId : undefined;

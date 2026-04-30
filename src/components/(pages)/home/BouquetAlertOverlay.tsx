@@ -1,6 +1,7 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 
@@ -41,15 +42,11 @@ export default function BouquetAlertOverlay() {
   const { data: alerts } = useBouquetAlertsQuery(Boolean(isLoggedIn));
   const latestAlert = useMemo(() => alerts?.[0], [alerts]);
   const [visibleAlert, setVisibleAlert] = useState<BouquetAlertItem | null>(null);
+  if (latestAlert && !visibleAlert) {
+    setVisibleAlert(latestAlert);
+  }
   const lastRequestedReadAlertIdRef = useRef<number | null>(null);
   const { mutate: readAlert } = useReadBouquetAlertMutation();
-
-  useEffect(() => {
-    if (!latestAlert || visibleAlert) {
-      return;
-    }
-    setVisibleAlert(latestAlert);
-  }, [latestAlert, visibleAlert]);
 
   useEffect(() => {
     if (!visibleAlert || lastRequestedReadAlertIdRef.current === visibleAlert.alertId) {
@@ -92,10 +89,13 @@ export default function BouquetAlertOverlay() {
 
         <div className="relative mt-10 flex w-full flex-1 items-center justify-center">
           {visibleAlert.bouquetImageUrl ? (
-            <img
+            <Image
               src={visibleAlert.bouquetImageUrl}
               alt={`${visibleAlert.displayName}님이 완성한 꽃다발`}
+              width={210}
+              height={340}
               className="h-auto max-h-[340px] w-[210px] object-contain"
+              unoptimized
             />
           ) : null}
           <span className="absolute text-[70px] leading-none text-[var(--color-red-400)]">?</span>

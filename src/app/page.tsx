@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 import Footer from "@/components/Footer";
 import HomeActionSection from "@/components/(pages)/home/HomeActionSection";
 import BouquetAlertOverlay from "@/components/(pages)/home/BouquetAlertOverlay";
@@ -9,9 +11,12 @@ export default function Home() {
         className="relative h-[910px] w-full max-w-[430px] overflow-hidden bg-[#bcd9ec]"
         aria-label="로그인 가입 화면"
       >
-        <img
+        <Image
           src="/images/home.png"
           alt="마음 꽃집 메인 일러스트"
+          fill
+          priority
+          sizes="430px"
           className="h-[910px] w-full object-cover"
         />
 

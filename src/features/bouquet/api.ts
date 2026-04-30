@@ -182,7 +182,7 @@ export const fetchBouquetAlerts = async (
 ): Promise<BouquetAlertItem[]> => {
   const response = await apiRequest<BouquetAlertsResponse>(
     baseUrl,
-    "/api/v1/bouquet-alerts",
+    "/api/v1/bouquet-completion-alerts",
   );
   return response?.data?.alerts ?? [];
 };
@@ -193,7 +193,7 @@ export const readBouquetAlert = async (
 ): Promise<ApiVoidResponse> => {
   return apiRequest<ApiVoidResponse>(
     baseUrl,
-    `/api/v1/bouquet-alerts/${alertId}/read`,
+    `/api/v1/bouquet-completion-alerts/${alertId}/read`,
     { method: "PATCH" },
   );
 };

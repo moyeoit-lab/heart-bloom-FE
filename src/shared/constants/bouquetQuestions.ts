@@ -57,7 +57,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: " 덕분에",
       body: "할 수 있게 된 것은 무엇인가요?",
       subjectTitle: "할 수 있게 된 것",
-      detailTitle: "상대 덕분에 할 수 있게 된 것",
+      detailTitle: "상대방 덕분에 할 수 있게된것",
     },
     {
       step: 3,
@@ -65,7 +65,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "이",
       body: "티 내지 않고 챙겨 준다는 걸\n느낀 순간이 있나요?",
       subjectTitle: "챙겨주는 느낌",
-      detailTitle: "상대가 챙겨준단 걸 느꼈던 순간",
+      detailTitle: "상대방이 챙겨준단걸 느꼈던 순간",
     },
     {
       step: 4,
@@ -73,7 +73,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "이 해준 말 중",
       body: "지금도 기억에 남는 한마디가\n있다면 무엇인가요?",
       subjectTitle: "기억에 남는 한 마디",
-      detailTitle: "가장 기억에 남는 상대의 한마디",
+      detailTitle: "가장 기억에 남는 상대방의 한마디",
     },
     OPTIONAL_LAST_QUESTION,
   ],
@@ -119,7 +119,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "과 있을 때",
       body: "주로 어떤 이야기를 나누나요?",
       subjectTitle: "주로 나누는 이야기",
-      detailTitle: "상대와 주로 나누는 이야기",
+      detailTitle: "상대방과 주로 나누는 이야기",
     },
     {
       step: 2,
@@ -143,7 +143,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "에게",
       body: "솔직하게 말 못 했던게 있다면\n무엇인가요?",
       subjectTitle: "솔직한 마음",
-      detailTitle: "상대에게 솔직하게 말 못 했던 것",
+      detailTitle: "상대방에게 솔직하게 말 못 했던 것",
     },
     OPTIONAL_LAST_QUESTION,
   ],
@@ -154,7 +154,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "이 모를 것 같은",
       body: "나만의 습관이나 취향이\n있다면 무엇인가요?",
       subjectTitle: "습관과 취향",
-      detailTitle: "상대가 모르는 나만의 습관/취향",
+      detailTitle: "상대방이 모르는 나만의 습관/취향",
     },
     {
       step: 2,
@@ -162,7 +162,7 @@ export const QUESTIONS_BY_SUBJECT: Record<QuestionSubjectKey, Question[]> = {
       recipientLine: "에게서",
       body: "발견한 의외의 점이 있나요?",
       subjectTitle: "의외의 점",
-      detailTitle: "상대의 의외의 점",
+      detailTitle: "상대방의 의외의 점",
     },
     {
       step: 3,

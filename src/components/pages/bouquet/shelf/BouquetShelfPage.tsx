@@ -72,7 +72,10 @@ export default function BouquetShelfPage() {
     if (activeTab === "sent") {
       return buildDisplayCards("sent", bouquetShelfData?.sentBouquets ?? []);
     }
-    return buildDisplayCards("received", bouquetShelfData?.receivedBouquets ?? []);
+    return buildDisplayCards(
+      "received",
+      bouquetShelfData?.receivedBouquets ?? [],
+    );
   }, [activeTab, bouquetShelfData]);
 
   return (

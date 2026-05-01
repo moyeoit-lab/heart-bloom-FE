@@ -123,7 +123,7 @@ export default function FlowerDetailPage() {
           />
         </div>
         <h1 className="typo-title-3 text-center text-[var(--color-brown-300)]">
-          {question.subjectTitle}
+          {question.detailTitle ?? question.subjectTitle}
         </h1>
       </section>
 

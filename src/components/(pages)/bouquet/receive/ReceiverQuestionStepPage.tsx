@@ -18,24 +18,48 @@ import {
   type CreateBouquetAnswer,
 } from "@/features/bouquet";
 import {
+  getQuestionByStep,
+  getQuestions,
   mapQuestionsByQuestionIds,
 } from "@/shared/constants/bouquetQuestions";
+import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
+import type { BouquetTypeKey } from "@/features/bouquet";
 import { useSessionState } from "@/shared/hooks/useSessionState";
 import QuestionStepper from "@/components/(pages)/bouquet/create/QuestionStepper";
+
+const DEFAULT_ACCENT_COLOR = "var(--color-red-400)";
+const DEFAULT_NAME_COLOR = "var(--color-red-300)";
 
 const TEXTAREA_ROWS = 8;
 const PAGE_WIDTH = 375;
 
 type ReceiverAnswers = Record<number, string>;
 
-const getAnswersStorageKey = (token: string) => `bouquetReceive.answers.${token}`;
+const getAnswersStorageKey = (token: string) =>
+  `bouquetReceive.answers.${token}`;
 
 const isOptionalQuestion = (question: BouquetLinkQuestion) =>
   question.answerType === "OPTIONAL";
 
-const normalizeQuestions = (questions: BouquetLinkQuestion[] | undefined) => {
+const normalizeQuestions = (
+  questions: BouquetLinkQuestion[] | undefined,
+  bouquetTypeKey: BouquetTypeKey | undefined,
+) => {
   if (!questions) {
     return [];
+  }
+
+  if (bouquetTypeKey) {
+    const stepOrderByQuestionId = new Map<number, number>(
+      getQuestions(bouquetTypeKey).map((q) => [q.questionId, q.step]),
+    );
+    return [...questions].sort((a, b) => {
+      const aOrder =
+        stepOrderByQuestionId.get(a.questionId) ?? Number.MAX_SAFE_INTEGER;
+      const bOrder =
+        stepOrderByQuestionId.get(b.questionId) ?? Number.MAX_SAFE_INTEGER;
+      return aOrder - bOrder;
+    });
   }
 
   return [...questions].sort((a, b) => {
@@ -60,9 +84,20 @@ export default function ReceiverQuestionStepPage() {
 
   const { data: bouquetInfo } = useBouquetByLinkQuery(token);
   const senderName = bouquetInfo?.senderName?.trim() || "보낸 분";
+  const visual = useMemo(
+    () => getBouquetVisualByName(bouquetInfo?.bouquetName),
+    [bouquetInfo?.bouquetName],
+  );
+  const bouquetTypeKey = visual?.key;
+  const accentColor = visual?.accentColor ?? DEFAULT_ACCENT_COLOR;
+  const nameColor = visual?.accentColor ?? DEFAULT_NAME_COLOR;
+
   const { data: questionData, isPending: isQuestionsPending } =
     useBouquetLinkQuestionsQuery(token);
-  const questions = useMemo(() => normalizeQuestions(questionData), [questionData]);
+  const questions = useMemo(
+    () => normalizeQuestions(questionData, bouquetTypeKey),
+    [questionData, bouquetTypeKey],
+  );
   const mappedQuestions = useMemo(
     () => mapQuestionsByQuestionIds(questions.map((item) => item.questionId)),
     [questions],
@@ -73,8 +108,14 @@ export default function ReceiverQuestionStepPage() {
   const isStepValid = Number.isInteger(step) && step >= 1 && step <= totalSteps;
   const question = isStepValid ? questions[step - 1] : undefined;
   const mappedQuestion = isStepValid ? mappedQuestions?.[step - 1] : undefined;
-  const displayQuestionTitle = mappedQuestion?.body ?? question?.title ?? "";
-  const displayRecipientLine = mappedQuestion?.recipientLine ?? "에게";
+  const fallbackQuestion =
+    !mappedQuestion && bouquetTypeKey && isStepValid
+      ? getQuestionByStep(bouquetTypeKey, step)
+      : undefined;
+  const displayQuestionTitle =
+    mappedQuestion?.body ?? fallbackQuestion?.body ?? question?.title ?? "";
+  const displayRecipientLine =
+    mappedQuestion?.recipientLine ?? fallbackQuestion?.recipientLine ?? "에게";
   const value = answers[step] ?? "";
   const isFilled = value.trim().length > 0;
   const isOptional = question ? isOptionalQuestion(question) : false;
@@ -86,9 +127,18 @@ export default function ReceiverQuestionStepPage() {
     }
 
     if (!isQuestionsPending && totalSteps > 0 && !isStepValid) {
-      router.replace(`/bouquet/${token}/questions/1?receiverName=${encodeURIComponent(receiverName)}`);
+      router.replace(
+        `/bouquet/${token}/questions/1?receiverName=${encodeURIComponent(receiverName)}`,
+      );
     }
-  }, [isQuestionsPending, isStepValid, receiverName, router, token, totalSteps]);
+  }, [
+    isQuestionsPending,
+    isStepValid,
+    receiverName,
+    router,
+    token,
+    totalSteps,
+  ]);
 
   if (!question || !receiverName) {
     return null;
@@ -109,32 +159,37 @@ export default function ReceiverQuestionStepPage() {
   } | null => {
     let hasOptionalAnswer = false;
 
-    const entries = questions.reduce<CreateBouquetAnswer[]>((acc, item, index) => {
-      const currentStep = index + 1;
-      const answer = (answers[currentStep] ?? "").trim();
+    const entries = questions.reduce<CreateBouquetAnswer[]>(
+      (acc, item, index) => {
+        const currentStep = index + 1;
+        const answer = (answers[currentStep] ?? "").trim();
 
-      if (!answer && !isOptionalQuestion(item)) {
+        if (!answer && !isOptionalQuestion(item)) {
+          return acc;
+        }
+
+        if (!answer) {
+          return acc;
+        }
+
+        if (isOptionalQuestion(item)) {
+          hasOptionalAnswer = true;
+        }
+
+        acc.push({
+          questionId: item.questionId,
+          answerType: "SUBJECTIVE",
+          answer,
+          sortOrder: currentStep,
+        });
         return acc;
-      }
+      },
+      [],
+    );
 
-      if (!answer) {
-        return acc;
-      }
-
-      if (isOptionalQuestion(item)) {
-        hasOptionalAnswer = true;
-      }
-
-      acc.push({
-        questionId: item.questionId,
-        answerType: "SUBJECTIVE",
-        answer,
-        sortOrder: currentStep,
-      });
-      return acc;
-    }, []);
-
-    const requiredCount = questions.filter((item) => !isOptionalQuestion(item)).length;
+    const requiredCount = questions.filter(
+      (item) => !isOptionalQuestion(item),
+    ).length;
     if (entries.length < requiredCount) {
       return null;
     }
@@ -171,6 +226,9 @@ export default function ReceiverQuestionStepPage() {
         receiverName,
         hasOptional: payloadAnswers.hasOptionalAnswer ? "true" : "false",
       });
+      if (bouquetTypeKey) {
+        query.set("bouquetType", bouquetTypeKey);
+      }
       router.push(`/bouquet/receive/packing?${query.toString()}`);
     } catch (error) {
       console.error(error);
@@ -234,10 +292,7 @@ export default function ReceiverQuestionStepPage() {
       <section className="flex flex-1 flex-col">
         <div className="flex flex-col gap-[30px]">
           <div className="flex flex-col">
-            <QuestionStepper
-              currentStep={step}
-              accentColor="var(--color-red-400)"
-            />
+            <QuestionStepper currentStep={step} accentColor={accentColor} />
             <div className="flex flex-col gap-1 p-5">
               {isOptional ? (
                 <p className="typo-body-3 text-[var(--color-gray-300)]">
@@ -249,9 +304,7 @@ export default function ReceiverQuestionStepPage() {
                 style={{ lineHeight: "30px" }}
               >
                 <span className="whitespace-nowrap">
-                  <span className="text-[var(--color-red-300)]">
-                    {receiverName}
-                  </span>
+                  <span style={{ color: nameColor }}>{receiverName}</span>
                   <span className="text-[var(--color-brown-300)]">님이 </span>
                 </span>
                 <span className="whitespace-nowrap text-[var(--color-brown-300)]">

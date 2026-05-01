@@ -1,8 +1,15 @@
 "use client";
 
 import { useQueryClient } from "@tanstack/react-query";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+} from "react";
 
 import { Button } from "@/components/Button";
 import {
@@ -40,19 +47,20 @@ export default function BouquetAlertOverlay() {
   );
   const { data: alerts } = useBouquetAlertsQuery(Boolean(isLoggedIn));
   const latestAlert = useMemo(() => alerts?.[0], [alerts]);
-  const [visibleAlert, setVisibleAlert] = useState<BouquetAlertItem | null>(null);
+  const [visibleAlert, setVisibleAlert] = useState<BouquetAlertItem | null>(
+    null,
+  );
+  if (latestAlert && !visibleAlert) {
+    setVisibleAlert(latestAlert);
+  }
   const lastRequestedReadAlertIdRef = useRef<number | null>(null);
   const { mutate: readAlert } = useReadBouquetAlertMutation();
 
   useEffect(() => {
-    if (!latestAlert || visibleAlert) {
-      return;
-    }
-    setVisibleAlert(latestAlert);
-  }, [latestAlert, visibleAlert]);
-
-  useEffect(() => {
-    if (!visibleAlert || lastRequestedReadAlertIdRef.current === visibleAlert.alertId) {
+    if (
+      !visibleAlert ||
+      lastRequestedReadAlertIdRef.current === visibleAlert.alertId
+    ) {
       return;
     }
     lastRequestedReadAlertIdRef.current = visibleAlert.alertId;
@@ -80,7 +88,9 @@ export default function BouquetAlertOverlay() {
       <section className="flex flex-1 flex-col items-center px-5 pb-safe-bottom">
         <div className="pt-16 text-center">
           <h2 className="typo-title-1 text-[var(--color-brown-300)]">
-            <span className="text-[var(--color-red-400)]">{visibleAlert.displayName}</span>
+            <span className="text-[var(--color-red-400)]">
+              {visibleAlert.displayName}
+            </span>
             님이
             <br />
             꽃다발을 완성했어요
@@ -92,17 +102,25 @@ export default function BouquetAlertOverlay() {
 
         <div className="relative mt-10 flex w-full flex-1 items-center justify-center">
           {visibleAlert.bouquetImageUrl ? (
-            <img
+            <Image
               src={visibleAlert.bouquetImageUrl}
               alt={`${visibleAlert.displayName}님이 완성한 꽃다발`}
+              width={210}
+              height={340}
               className="h-auto max-h-[340px] w-[210px] object-contain"
+              unoptimized
             />
           ) : null}
-          <span className="absolute text-[70px] leading-none text-[var(--color-red-400)]">?</span>
+          <span className="absolute text-[70px] leading-none text-[var(--color-red-400)]">
+            ?
+          </span>
         </div>
 
         <div className="w-full pb-5 pt-4">
-          <Button className="h-12 w-full" onClick={() => router.push("/bouquet")}>
+          <Button
+            className="h-12 w-full"
+            onClick={() => router.push("/bouquet")}
+          >
             꽃다발 보러가기
           </Button>
         </div>

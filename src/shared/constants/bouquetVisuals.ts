@@ -71,3 +71,9 @@ export const getBouquetVisualByKey = (key: BouquetTypeKey) =>
 
 export const getBouquetVisualById = (id: number) =>
   BOUQUET_VISUALS.find((visual) => visual.beId === id);
+
+export const getBouquetVisualByName = (name: string | undefined) => {
+  if (!name) return undefined;
+  const trimmed = name.trim();
+  return BOUQUET_VISUALS.find((visual) => visual.fallbackName === trimmed);
+};

@@ -18,7 +18,10 @@ export default function ReceiverNicknamePage() {
   const token = params.token;
   const [nickname, setNickname] = useState("");
   const { data } = useBouquetByLinkQuery(token);
-  const senderName = useMemo(() => data?.senderName?.trim() || "보낸 분", [data]);
+  const senderName = useMemo(
+    () => data?.senderName?.trim() || "보낸 분",
+    [data],
+  );
 
   const trimmedNickname = nickname.trim();
   const isNextEnabled = trimmedNickname.length > 0;
@@ -49,7 +52,7 @@ export default function ReceiverNicknamePage() {
       <section className="flex flex-1 flex-col justify-between">
         <div className="flex flex-col gap-7">
           <div className="flex flex-col gap-4 px-5 pb-5 pt-3">
-          <h1
+            <h1
               className="typo-title-2 whitespace-pre-line text-[var(--color-brown-300)]"
               style={{ lineHeight: "30px" }}
             >

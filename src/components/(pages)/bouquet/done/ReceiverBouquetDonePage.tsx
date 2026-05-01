@@ -557,7 +557,6 @@ export default function ReceiverBouquetDonePage() {
           onClose={() => setActiveStep(null)}
         />
       ) : null}
-
     </main>
   );
 }

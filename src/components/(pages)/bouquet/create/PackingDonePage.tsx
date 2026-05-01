@@ -371,8 +371,8 @@ export default function PackingDonePage() {
       const titleY = 144;
       const bodyLine1Y = 180;
       const bodyLine2Y = 204;
-      const titleFont = '600 22px Paperlogy, sans-serif';
-      const bodyFont = '400 14px Paperlogy, sans-serif';
+      const titleFont = "600 22px Paperlogy, sans-serif";
+      const bodyFont = "400 14px Paperlogy, sans-serif";
 
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
@@ -393,7 +393,11 @@ export default function PackingDonePage() {
       ctx.textAlign = "center";
       ctx.font = bodyFont;
       ctx.fillStyle = DOWNLOAD_BODY_HEX;
-      ctx.fillText(`${recipient}에게 링크를 공유하고`, PAGE_WIDTH / 2, bodyLine1Y);
+      ctx.fillText(
+        `${recipient}에게 링크를 공유하고`,
+        PAGE_WIDTH / 2,
+        bodyLine1Y,
+      );
       ctx.fillText(
         "우리만의 더 풍성한 꽃다발을 완성해보세요",
         PAGE_WIDTH / 2,

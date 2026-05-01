@@ -16,10 +16,33 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.heart-blooming.site"),
   title: "마음 꽃집",
   description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
   icons: {
     icon: "/logo.svg",
+  },
+  openGraph: {
+    title: "마음 꽃집",
+    description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
+    url: "https://www.heart-blooming.site",
+    siteName: "마음 꽃집",
+    images: [
+      {
+        url: "/images/home.png",
+        width: 1200,
+        height: 630,
+        alt: "마음 꽃집 — 따뜻한 가정의 달에만 열리는 마음 꽃집",
+      },
+    ],
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "마음 꽃집",
+    description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
+    images: ["/images/home.png"],
   },
 };
 

@@ -45,8 +45,12 @@ export default function ReceiverEntryPage() {
           <div className="absolute left-0 top-[50px] flex w-full flex-col items-center gap-4 px-5 text-center">
             <div className="flex flex-col items-center">
               <div className="flex items-center">
-                <span className="typo-title-1 text-[var(--color-red-400)]">{senderName}</span>
-                <span className="typo-title-1 text-[var(--color-brown-300)]">님이</span>
+                <span className="typo-title-1 text-[var(--color-red-400)]">
+                  {senderName}
+                </span>
+                <span className="typo-title-1 text-[var(--color-brown-300)]">
+                  님이
+                </span>
               </div>
               <p className="typo-title-1 whitespace-pre-line text-[var(--color-brown-300)]">
                 꽃과 마음 문답을{"\n"}보냈어요

@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: "마음 꽃집",
   description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
   icons: {
-		icon: "/logo.svg",
-	},
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({

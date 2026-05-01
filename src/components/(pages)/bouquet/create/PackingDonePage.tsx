@@ -267,7 +267,10 @@ export default function PackingDonePage() {
           kakao.init(kakaoJsKey);
         }
 
-        const imageUrl = new URL("/images/home.png", window.location.origin).toString();
+        const imageUrl = new URL(
+          "/images/home.png",
+          window.location.origin,
+        ).toString();
         kakao.Share.sendDefault({
           objectType: "feed",
           content: {

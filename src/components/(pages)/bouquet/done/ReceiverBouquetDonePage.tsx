@@ -197,8 +197,9 @@ export default function ReceiverBouquetDonePage() {
   )
     ? (bouquetTypeRaw as BouquetTypeKey)
     : undefined;
-  const bouquetTypeFromName = getBouquetVisualByName(bouquetInfo?.bouquetName)
-    ?.key;
+  const bouquetTypeFromName = getBouquetVisualByName(
+    bouquetInfo?.bouquetName,
+  )?.key;
   const bouquetTypeKey =
     bouquetTypeFromQuery ?? bouquetTypeFromName ?? DEFAULT_BOUQUET_KEY;
 
@@ -229,7 +230,9 @@ export default function ReceiverBouquetDonePage() {
     return aOrder - bOrder;
   });
   const activeQuestionId =
-    activeStep !== null ? sortedQuestions[activeStep - 1]?.questionId : undefined;
+    activeStep !== null
+      ? sortedQuestions[activeStep - 1]?.questionId
+      : undefined;
 
   const handleShare = () => {
     if (typeof window === "undefined") {

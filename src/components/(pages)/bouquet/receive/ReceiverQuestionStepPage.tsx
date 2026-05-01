@@ -35,7 +35,8 @@ const PAGE_WIDTH = 375;
 
 type ReceiverAnswers = Record<number, string>;
 
-const getAnswersStorageKey = (token: string) => `bouquetReceive.answers.${token}`;
+const getAnswersStorageKey = (token: string) =>
+  `bouquetReceive.answers.${token}`;
 
 const isOptionalQuestion = (question: BouquetLinkQuestion) =>
   question.answerType === "OPTIONAL";
@@ -126,9 +127,18 @@ export default function ReceiverQuestionStepPage() {
     }
 
     if (!isQuestionsPending && totalSteps > 0 && !isStepValid) {
-      router.replace(`/bouquet/${token}/questions/1?receiverName=${encodeURIComponent(receiverName)}`);
+      router.replace(
+        `/bouquet/${token}/questions/1?receiverName=${encodeURIComponent(receiverName)}`,
+      );
     }
-  }, [isQuestionsPending, isStepValid, receiverName, router, token, totalSteps]);
+  }, [
+    isQuestionsPending,
+    isStepValid,
+    receiverName,
+    router,
+    token,
+    totalSteps,
+  ]);
 
   if (!question || !receiverName) {
     return null;
@@ -149,32 +159,37 @@ export default function ReceiverQuestionStepPage() {
   } | null => {
     let hasOptionalAnswer = false;
 
-    const entries = questions.reduce<CreateBouquetAnswer[]>((acc, item, index) => {
-      const currentStep = index + 1;
-      const answer = (answers[currentStep] ?? "").trim();
+    const entries = questions.reduce<CreateBouquetAnswer[]>(
+      (acc, item, index) => {
+        const currentStep = index + 1;
+        const answer = (answers[currentStep] ?? "").trim();
 
-      if (!answer && !isOptionalQuestion(item)) {
+        if (!answer && !isOptionalQuestion(item)) {
+          return acc;
+        }
+
+        if (!answer) {
+          return acc;
+        }
+
+        if (isOptionalQuestion(item)) {
+          hasOptionalAnswer = true;
+        }
+
+        acc.push({
+          questionId: item.questionId,
+          answerType: "SUBJECTIVE",
+          answer,
+          sortOrder: currentStep,
+        });
         return acc;
-      }
+      },
+      [],
+    );
 
-      if (!answer) {
-        return acc;
-      }
-
-      if (isOptionalQuestion(item)) {
-        hasOptionalAnswer = true;
-      }
-
-      acc.push({
-        questionId: item.questionId,
-        answerType: "SUBJECTIVE",
-        answer,
-        sortOrder: currentStep,
-      });
-      return acc;
-    }, []);
-
-    const requiredCount = questions.filter((item) => !isOptionalQuestion(item)).length;
+    const requiredCount = questions.filter(
+      (item) => !isOptionalQuestion(item),
+    ).length;
     if (entries.length < requiredCount) {
       return null;
     }

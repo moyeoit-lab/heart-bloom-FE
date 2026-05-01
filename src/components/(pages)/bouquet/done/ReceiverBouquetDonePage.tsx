@@ -23,6 +23,22 @@ import yellowOptionalOff from "@/assets/images/bouquet-done/yellow-optional-off.
 import yellowOptionalOn from "@/assets/images/bouquet-done/yellow-optional-on.svg";
 import yellowRequiredOff from "@/assets/images/bouquet-done/yellow-required-off.svg";
 import yellowRequiredOn from "@/assets/images/bouquet-done/yellow-required-on.svg";
+import dlBlueOptionalOff from "@/assets/images/bouquet-download/receiver/blue-optional-off.svg";
+import dlBlueOptionalOn from "@/assets/images/bouquet-download/receiver/blue-optional-on.svg";
+import dlBlueRequiredOff from "@/assets/images/bouquet-download/receiver/blue-required-off.svg";
+import dlBlueRequiredOn from "@/assets/images/bouquet-download/receiver/blue-required-on.svg";
+import dlPinkOptionalOff from "@/assets/images/bouquet-download/receiver/pink-optinal-off.svg";
+import dlPinkOptionalOn from "@/assets/images/bouquet-download/receiver/pink-optinal-on.svg";
+import dlPinkRequiredOff from "@/assets/images/bouquet-download/receiver/pink-required-off.svg";
+import dlPinkRequiredOn from "@/assets/images/bouquet-download/receiver/pink-required-on.svg";
+import dlRedOptionalOff from "@/assets/images/bouquet-download/receiver/red-optional-off.svg";
+import dlRedOptionalOn from "@/assets/images/bouquet-download/receiver/red-optional-on.svg";
+import dlRedRequiredOff from "@/assets/images/bouquet-download/receiver/red-required-off.svg";
+import dlRedRequiredOn from "@/assets/images/bouquet-download/receiver/red-required-on.svg";
+import dlYellowOptionalOff from "@/assets/images/bouquet-download/receiver/yellow-optional-off.svg";
+import dlYellowOptionalOn from "@/assets/images/bouquet-download/receiver/yellow-optional-on.svg";
+import dlYellowRequiredOff from "@/assets/images/bouquet-download/receiver/yellow-required-off.svg";
+import dlYellowRequiredOn from "@/assets/images/bouquet-download/receiver/yellow-required-on.svg";
 import { Button } from "@/components/Button";
 import BouquetFlowerDetailOverlay from "@/components/(pages)/bouquet/done/BouquetFlowerDetailOverlay";
 import { Switch } from "@/components/Switch";
@@ -84,12 +100,40 @@ const VALID_BOUQUET_KEYS = new Set<BouquetTypeKey>(
   Object.keys(HERO_BY_TYPE) as BouquetTypeKey[],
 );
 
+const DOWNLOAD_HERO_BY_TYPE: Record<BouquetTypeKey, HeroVariant> = {
+  YELLOW_TULIP: {
+    optionalOff: dlYellowOptionalOff,
+    optionalOn: dlYellowOptionalOn,
+    requiredOff: dlYellowRequiredOff,
+    requiredOn: dlYellowRequiredOn,
+  },
+  RED_CARNATION: {
+    optionalOff: dlRedOptionalOff,
+    optionalOn: dlRedOptionalOn,
+    requiredOff: dlRedRequiredOff,
+    requiredOn: dlRedRequiredOn,
+  },
+  BLUE_LILY: {
+    optionalOff: dlBlueOptionalOff,
+    optionalOn: dlBlueOptionalOn,
+    requiredOff: dlBlueRequiredOff,
+    requiredOn: dlBlueRequiredOn,
+  },
+  PINK_GERBERA: {
+    optionalOff: dlPinkOptionalOff,
+    optionalOn: dlPinkOptionalOn,
+    requiredOff: dlPinkRequiredOff,
+    requiredOn: dlPinkRequiredOn,
+  },
+};
+
 const pickHero = (
   bouquetTypeKey: BouquetTypeKey,
   hasOptional: boolean,
   showMessages: boolean,
+  variantMap: Record<BouquetTypeKey, HeroVariant> = HERO_BY_TYPE,
 ) => {
-  const variant = HERO_BY_TYPE[bouquetTypeKey];
+  const variant = variantMap[bouquetTypeKey];
   if (hasOptional)
     return showMessages ? variant.optionalOn : variant.optionalOff;
   return showMessages ? variant.requiredOn : variant.requiredOff;
@@ -210,7 +254,14 @@ export default function ReceiverBouquetDonePage() {
 
   const [showMessages, setShowMessages] = useState(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
   const heroSrc = pickHero(bouquetTypeKey, hasOptional, showMessages);
+  const downloadHeroSrc = pickHero(
+    bouquetTypeKey,
+    hasOptional,
+    showMessages,
+    DOWNLOAD_HERO_BY_TYPE,
+  );
 
   const flowerHotspots = FLOWER_HOTSPOTS_BY_TYPE[bouquetTypeKey] ?? [];
   const noteHotspot = NOTE_HOTSPOT_BY_TYPE[bouquetTypeKey];
@@ -266,12 +317,74 @@ export default function ReceiverBouquetDonePage() {
     router.push("/");
   };
 
-  const handleDownload = () => {
-    // TODO: html-to-image 설치 후 PNG 캡처/다운로드 구현
-    console.info("[bouquet/receive/done] download clicked", {
-      bouquetTypeKey,
-      hasOptional,
-    });
+  const handleDownload = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      if (typeof document !== "undefined" && document.fonts) {
+        await document.fonts.ready;
+      }
+
+      const heroImg = new window.Image();
+      heroImg.src = downloadHeroSrc.src;
+      await new Promise<void>((resolve, reject) => {
+        if (heroImg.complete && heroImg.naturalWidth > 0) {
+          resolve();
+          return;
+        }
+        heroImg.onload = () => resolve();
+        heroImg.onerror = () => reject(new Error("hero load failed"));
+      });
+
+      const sceneVisibleHeight = SCENE_HEIGHT - STATUS_BAR_OFFSET;
+      const ratio = 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = PAGE_WIDTH * ratio;
+      canvas.height = sceneVisibleHeight * ratio;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("canvas context not available");
+      }
+      ctx.scale(ratio, ratio);
+
+      ctx.drawImage(heroImg, 0, -STATUS_BAR_OFFSET, PAGE_WIDTH, SCENE_HEIGHT);
+
+      const tagCenterX = TAG_TEXT.left + TAG_TEXT.width / 2;
+      const tagCenterY = TAG_TEXT.top + TAG_TEXT.height / 2;
+      ctx.save();
+      ctx.translate(tagCenterX, tagCenterY);
+      ctx.rotate((-10 * Math.PI) / 180);
+      ctx.font = "16px Paperlogy, sans-serif";
+      ctx.fillStyle = "#453030";
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      ctx.fillText(`${senderName} & ${receiverName}`, 0, 0);
+      ctx.restore();
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png"),
+      );
+      if (!blob) {
+        throw new Error("canvas toBlob failed");
+      }
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = `heart_blooming-${yyyy}-${mm}-${dd}.png`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      toast("이미지 저장에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -354,8 +467,9 @@ export default function ReceiverBouquetDonePage() {
           <button
             type="button"
             onClick={handleDownload}
+            disabled={isDownloading}
             aria-label="이미지 저장"
-            className="flex h-6 w-6 items-center justify-center"
+            className="flex h-6 w-6 items-center justify-center disabled:opacity-50"
           >
             <Image
               src={downloadIcon}
@@ -443,6 +557,7 @@ export default function ReceiverBouquetDonePage() {
           onClose={() => setActiveStep(null)}
         />
       ) : null}
+
     </main>
   );
 }

@@ -15,6 +15,14 @@ import redMiniA from "@/assets/images/packing/red-mini-a.svg";
 import redMiniQ from "@/assets/images/packing/red-mini-q.svg";
 import yellowMiniA from "@/assets/images/packing/yellow-mini-a.svg";
 import yellowMiniQ from "@/assets/images/packing/yellow-mini-q.svg";
+import dlBlueRequiredOff from "@/assets/images/bouquet-download/sender/blue-required-off.svg";
+import dlBlueRequiredOn from "@/assets/images/bouquet-download/sender/blue-required-on.svg";
+import dlPinkRequiredOff from "@/assets/images/bouquet-download/sender/pink-required-off.svg";
+import dlPinkRequiredOn from "@/assets/images/bouquet-download/sender/pink-required-on.svg";
+import dlRedRequiredOff from "@/assets/images/bouquet-download/sender/red-required-off.svg";
+import dlRedRequiredOn from "@/assets/images/bouquet-download/sender/red-required-on.svg";
+import dlYellowRequiredOff from "@/assets/images/bouquet-download/sender/yellow-required-off.svg";
+import dlYellowRequiredOn from "@/assets/images/bouquet-download/sender/yellow-required-on.svg";
 import { Button } from "@/components/Button";
 import { Switch } from "@/components/Switch";
 import { toast } from "@/components/Toast";
@@ -71,6 +79,24 @@ const PACKING_DONE_VISUALS: Record<BouquetTypeKey, PackingDoneVisual> = {
 const VALID_BOUQUET_KEYS = new Set<BouquetTypeKey>(
   Object.keys(PACKING_DONE_VISUALS) as BouquetTypeKey[],
 );
+
+const DOWNLOAD_HERO_BY_TYPE: Record<
+  BouquetTypeKey,
+  { off: StaticImg; on: StaticImg }
+> = {
+  YELLOW_TULIP: { off: dlYellowRequiredOff, on: dlYellowRequiredOn },
+  RED_CARNATION: { off: dlRedRequiredOff, on: dlRedRequiredOn },
+  BLUE_LILY: { off: dlBlueRequiredOff, on: dlBlueRequiredOn },
+  PINK_GERBERA: { off: dlPinkRequiredOff, on: dlPinkRequiredOn },
+};
+
+const DOWNLOAD_NICKNAME_HEX_BY_TYPE: Record<BouquetTypeKey, string> = {
+  YELLOW_TULIP: "#f8b500",
+  RED_CARNATION: "#dd424c",
+  BLUE_LILY: "#347fe6",
+  PINK_GERBERA: "#dd7494",
+};
+const DOWNLOAD_BODY_HEX = "#473333";
 
 type FlowerClickRegion = {
   left: number;
@@ -210,8 +236,12 @@ export default function PackingDonePage() {
     : DEFAULT_BOUQUET_KEY;
 
   const [showMessages, setShowMessages] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const visual = PACKING_DONE_VISUALS[bouquetTypeKey];
   const heroSrc = showMessages ? visual.miniA : visual.miniQ;
+  const downloadHero = DOWNLOAD_HERO_BY_TYPE[bouquetTypeKey];
+  const downloadHeroSrc = showMessages ? downloadHero.on : downloadHero.off;
+  const downloadNicknameColor = DOWNLOAD_NICKNAME_HEX_BY_TYPE[bouquetTypeKey];
   const flowerRegions = FLOWER_CLICK_REGIONS[bouquetTypeKey];
   const questions = getQuestions(bouquetTypeKey);
   const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
@@ -307,9 +337,93 @@ export default function PackingDonePage() {
     }
   };
 
-  const handleDownload = () => {
-    // TODO: 이미지 저장
-    console.info("[bouquet/create/done] download clicked");
+  const handleDownload = async () => {
+    if (isDownloading) return;
+    setIsDownloading(true);
+    try {
+      if (typeof document !== "undefined" && document.fonts) {
+        await document.fonts.ready;
+      }
+
+      const heroImg = new window.Image();
+      heroImg.src = downloadHeroSrc.src;
+      await new Promise<void>((resolve, reject) => {
+        if (heroImg.complete && heroImg.naturalWidth > 0) {
+          resolve();
+          return;
+        }
+        heroImg.onload = () => resolve();
+        heroImg.onerror = () => reject(new Error("hero load failed"));
+      });
+
+      const ratio = 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = PAGE_WIDTH * ratio;
+      canvas.height = SCENE_HEIGHT * ratio;
+      const ctx = canvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("canvas context not available");
+      }
+      ctx.scale(ratio, ratio);
+
+      ctx.drawImage(heroImg, 0, 0, PAGE_WIDTH, SCENE_HEIGHT);
+
+      const titleY = 144;
+      const bodyLine1Y = 180;
+      const bodyLine2Y = 204;
+      const titleFont = '600 22px Paperlogy, sans-serif';
+      const bodyFont = '400 14px Paperlogy, sans-serif';
+
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+
+      ctx.font = titleFont;
+      const nicknameLabel = nickname;
+      const titleSuffix = "님의 꽃다발 준비중";
+      const nicknameWidth = ctx.measureText(nicknameLabel).width;
+      const suffixWidth = ctx.measureText(titleSuffix).width;
+      const titleTotalWidth = nicknameWidth + suffixWidth;
+      const titleStartX = PAGE_WIDTH / 2 - titleTotalWidth / 2;
+      ctx.textAlign = "left";
+      ctx.fillStyle = downloadNicknameColor;
+      ctx.fillText(nicknameLabel, titleStartX, titleY);
+      ctx.fillStyle = DOWNLOAD_BODY_HEX;
+      ctx.fillText(titleSuffix, titleStartX + nicknameWidth, titleY);
+
+      ctx.textAlign = "center";
+      ctx.font = bodyFont;
+      ctx.fillStyle = DOWNLOAD_BODY_HEX;
+      ctx.fillText(`${recipient}에게 링크를 공유하고`, PAGE_WIDTH / 2, bodyLine1Y);
+      ctx.fillText(
+        "우리만의 더 풍성한 꽃다발을 완성해보세요",
+        PAGE_WIDTH / 2,
+        bodyLine2Y,
+      );
+
+      const blob = await new Promise<Blob | null>((resolve) =>
+        canvas.toBlob(resolve, "image/png"),
+      );
+      if (!blob) {
+        throw new Error("canvas toBlob failed");
+      }
+      const today = new Date();
+      const yyyy = today.getFullYear();
+      const mm = String(today.getMonth() + 1).padStart(2, "0");
+      const dd = String(today.getDate()).padStart(2, "0");
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.download = `heart_blooming-${yyyy}-${mm}-${dd}.png`;
+      link.href = url;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      toast("이미지 저장에 실패했어요. 다시 시도해 주세요.");
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -376,8 +490,9 @@ export default function PackingDonePage() {
           <button
             type="button"
             onClick={handleDownload}
+            disabled={isDownloading}
             aria-label="이미지 저장"
-            className="flex h-6 w-6 items-center justify-center"
+            className="flex h-6 w-6 items-center justify-center disabled:opacity-50"
           >
             <Image
               src={downloadIcon}

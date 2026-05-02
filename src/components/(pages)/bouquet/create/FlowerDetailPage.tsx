@@ -8,6 +8,7 @@ import { useEffect, useMemo } from "react";
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { TextArea } from "@/components/TextArea";
 import {
+  useBouquetLinkUrlQuery,
   useBouquetQuestionAnswersQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
@@ -37,6 +38,22 @@ const FLOWER_BG_BY_TYPE: Record<BouquetTypeKey, string> = {
   PINK_GERBERA: "bg-gradient-to-t from-[#feffd7] to-[#ffd0db] to-[112.41%]",
 };
 
+const extractTokenFromShareUrl = (shareUrl: string | undefined) => {
+  if (!shareUrl) {
+    return undefined;
+  }
+
+  try {
+    const parsedUrl = new URL(shareUrl);
+    const segments = parsedUrl.pathname.split("/").filter(Boolean);
+    const bouquetIndex = segments.findIndex((segment) => segment === "bouquet");
+    const tokenCandidate = bouquetIndex >= 0 ? segments[bouquetIndex + 1] : "";
+    return tokenCandidate?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export default function FlowerDetailPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -64,7 +81,21 @@ export default function FlowerDetailPage() {
 
   const { answers } = useBouquetAnswers();
   const { result } = useBouquetCreationResult();
-  const linkToken = result?.linkToken;
+  const tokenFromQuery =
+    searchParams.get("token")?.trim() ||
+    searchParams.get("linkToken")?.trim() ||
+    undefined;
+  const bouquetIdFromQuery = Number(searchParams.get("bouquetId"));
+  const bouquetId =
+    Number.isInteger(bouquetIdFromQuery) && bouquetIdFromQuery > 0
+      ? bouquetIdFromQuery
+      : undefined;
+  const { data: shareUrl } = useBouquetLinkUrlQuery(bouquetId);
+  const tokenFromShareUrl = useMemo(
+    () => extractTokenFromShareUrl(shareUrl),
+    [shareUrl],
+  );
+  const linkToken = tokenFromQuery ?? result?.linkToken ?? tokenFromShareUrl;
 
   const visual = useMemo(
     () =>

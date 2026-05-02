@@ -15,10 +15,12 @@ import yellowBouquetImage from "@/assets/images/bouquets/yellow-shelf.svg";
 import { Button } from "@/components/Button";
 import { useBouquetShelfQuery } from "@/features/bouquet/queries";
 import type { BouquetShelfItem } from "@/features/bouquet/types";
+import { getBouquetVisualById } from "@/shared/constants/bouquetVisuals";
 
 type BouquetCard = {
   id: string;
   bouquetType: "red" | "pink" | "yellow" | "blue" | "empty";
+  item?: BouquetShelfItem;
 };
 
 type BouquetType = BouquetCard["bouquetType"];
@@ -59,7 +61,42 @@ const buildDisplayCards = (
     bouquetType: bouquets[index]
       ? getBouquetTypeFromId(bouquets[index].bouquetTypeId)
       : "empty",
+    item: bouquets[index],
   }));
+};
+
+const getTokenFromItem = (item: BouquetShelfItem) =>
+  item.linkToken?.trim() || item.token?.trim();
+
+const isWaitingAnswer = (item: BouquetShelfItem) =>
+  item.answerStatus === "WAITING_FOR_MY_ANSWER" ||
+  item.answerStatus === "WAITING_FOR_COUNTERPART_ANSWER" ||
+  item.answerStatus === "NOT_ANSWERED";
+
+const buildDonePageQuery = (
+  item: BouquetShelfItem,
+  options: {
+    senderName: string;
+    receiverName: string;
+    token?: string;
+    bouquetId?: number;
+  },
+) => {
+  const query = new URLSearchParams({
+    senderName: options.senderName,
+    receiverName: options.receiverName,
+  });
+  const bouquetType = getBouquetVisualById(item.bouquetTypeId)?.key;
+  if (bouquetType) {
+    query.set("bouquetType", bouquetType);
+  }
+  if (options.token) {
+    query.set("token", options.token);
+  }
+  if (options.bouquetId) {
+    query.set("bouquetId", String(options.bouquetId));
+  }
+  return `/bouquet/receive/done?${query.toString()}`;
 };
 
 export default function BouquetShelfPage() {
@@ -67,19 +104,72 @@ export default function BouquetShelfPage() {
   const [activeTab, setActiveTab] = useState<"sent" | "received">("sent");
   const { data: bouquetShelfData } = useBouquetShelfQuery();
   const nickname = bouquetShelfData?.senderName?.trim() || "";
+  const sentBouquets = bouquetShelfData?.sentBouquets ?? [];
+  const receivedBouquets = bouquetShelfData?.receivedBouquets ?? [];
 
   const cards = useMemo(() => {
     if (activeTab === "sent") {
-      return buildDisplayCards("sent", bouquetShelfData?.sentBouquets ?? []);
+      return buildDisplayCards("sent", sentBouquets);
     }
-    return buildDisplayCards(
-      "received",
-      bouquetShelfData?.receivedBouquets ?? [],
-    );
-  }, [activeTab, bouquetShelfData]);
+    return buildDisplayCards("received", receivedBouquets);
+  }, [activeTab, sentBouquets, receivedBouquets]);
+
+  const handleCardClick = (item: BouquetShelfItem | undefined) => {
+    if (!item?.bouquetId) {
+      return;
+    }
+
+    const token = getTokenFromItem(item);
+    const displayName = item.displayName?.trim() || "";
+    const answerStatus = item.answerStatus;
+
+    if (activeTab === "sent") {
+      if (answerStatus === "WAITING_FOR_COUNTERPART_ANSWER") {
+        const query = new URLSearchParams({
+          nickname,
+          recipient: displayName || "상대방",
+        });
+        const bouquetType = getBouquetVisualById(item.bouquetTypeId)?.key;
+        if (bouquetType) {
+          query.set("bouquetType", bouquetType);
+        }
+        query.set("bouquetId", String(item.bouquetId));
+        router.push(`/bouquet/create/done?${query.toString()}`);
+        return;
+      }
+
+      if (answerStatus === "COMPLETED") {
+        router.push(
+          buildDonePageQuery(item, {
+            senderName: nickname || "보낸 사람",
+            receiverName: displayName || "받는 사람",
+            token,
+            bouquetId: item.bouquetId,
+          }),
+        );
+      }
+      return;
+    }
+
+    if (answerStatus === "WAITING_FOR_MY_ANSWER" && token) {
+      router.push(`/bouquet/${token}`);
+      return;
+    }
+
+    if (answerStatus === "COMPLETED") {
+      router.push(
+        buildDonePageQuery(item, {
+          senderName: displayName || "보낸 사람",
+          receiverName: nickname || "받는 사람",
+          token,
+          bouquetId: item.bouquetId,
+        }),
+      );
+    }
+  };
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[430px] flex-col bg-[#fafafa]">
+    <main className="mx-auto flex min-h-dvh min-w-[375px] w-full max-w-[430px] flex-col bg-[#fafafa]">
       <header className="flex items-center justify-between p-4">
         <Link
           href="/"
@@ -143,17 +233,30 @@ export default function BouquetShelfPage() {
 
         <div className="mt-4 grid flex-1 auto-rows-[193px] grid-cols-2 gap-4 overflow-y-auto pb-28">
           {cards.map((card) => (
-            <div
+            <button
               key={card.id}
-              className="flex h-[193px] items-center justify-center"
+              type="button"
+              onClick={() => handleCardClick(card.item)}
+              aria-label={
+                card.item
+                  ? `${card.item.bouquetName} 보기`
+                  : "비어 있는 꽃다발 칸"
+              }
+              className="relative flex h-[193px] items-center justify-center overflow-hidden"
+              disabled={!card.item}
             >
+              {card.item && isWaitingAnswer(card.item) ? (
+                <span className="typo-caption-2 absolute left-[18px] top-3 z-10 rounded-[4px] border border-[var(--color-gray-100)] bg-[var(--color-white)] px-[10px] py-[3px] text-[var(--color-brown-300)] opacity-70 shadow-[0_0_12px_0_rgba(69,48,48,0.12)]">
+                  답변 대기중
+                </span>
+              ) : null}
               <Image
                 src={BOUQUET_IMAGE_BY_TYPE[card.bouquetType]}
                 alt=""
                 aria-hidden
                 className="h-[193px] w-[160px]"
               />
-            </div>
+            </button>
           ))}
         </div>
       </section>

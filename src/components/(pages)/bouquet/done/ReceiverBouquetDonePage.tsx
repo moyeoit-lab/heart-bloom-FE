@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import downloadIcon from "@/assets/icons/download-icon.svg";
 import homeIcon from "@/assets/icons/home-icon.svg";
@@ -46,6 +46,7 @@ import { toast } from "@/components/Toast";
 import {
   useBouquetByLinkQuery,
   useBouquetLinkQuestionsQuery,
+  useBouquetLinkUrlQuery,
   useReceiverBouquetQuestionsQuery,
   type BouquetTypeKey,
 } from "@/features/bouquet";
@@ -222,6 +223,22 @@ const NOTE_HOTSPOT_BY_TYPE: Partial<Record<BouquetTypeKey, FlowerHotspot>> = {
   },
 };
 
+const extractTokenFromShareUrl = (shareUrl: string | undefined) => {
+  if (!shareUrl) {
+    return undefined;
+  }
+
+  try {
+    const parsedUrl = new URL(shareUrl);
+    const segments = parsedUrl.pathname.split("/").filter(Boolean);
+    const bouquetIndex = segments.findIndex((segment) => segment === "bouquet");
+    const tokenCandidate = bouquetIndex >= 0 ? segments[bouquetIndex + 1] : "";
+    return tokenCandidate?.trim() || undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 export default function ReceiverBouquetDonePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -231,7 +248,18 @@ export default function ReceiverBouquetDonePage() {
 
   // 다른 프엔이 만들 진입/답변 페이지에서 URL ?token=xxx 로 넘겨줄 예정.
   // 토큰이 있으면 BE 응답으로 검증·hasOptional 도출, 없으면 placeholder 모드.
-  const token = searchParams.get("token")?.trim() || undefined;
+  const tokenFromQuery = searchParams.get("token")?.trim() || undefined;
+  const bouquetIdFromQuery = Number(searchParams.get("bouquetId"));
+  const bouquetId =
+    Number.isInteger(bouquetIdFromQuery) && bouquetIdFromQuery > 0
+      ? bouquetIdFromQuery
+      : undefined;
+  const { data: bouquetLinkUrl } = useBouquetLinkUrlQuery(bouquetId);
+  const tokenFromLinkUrl = useMemo(
+    () => extractTokenFromShareUrl(bouquetLinkUrl),
+    [bouquetLinkUrl],
+  );
+  const token = tokenFromQuery ?? tokenFromLinkUrl;
   const { data: receiverQuestions } = useReceiverBouquetQuestionsQuery(token);
   const { data: bouquetInfo } = useBouquetByLinkQuery(token);
 

@@ -27,6 +27,12 @@ export type BouquetSenderType = "USER" | "GUEST";
 
 export type BouquetReceiverType = "USER" | "GUEST" | "EVERYONE";
 
+export type BouquetAnswerStatus =
+  | "WAITING_FOR_MY_ANSWER"
+  | "WAITING_FOR_COUNTERPART_ANSWER"
+  | "COMPLETED"
+  | "NOT_ANSWERED";
+
 // ── GET /api/v1/bouquet/count
 export type BouquetCountResponse = {
   success?: boolean;
@@ -37,10 +43,21 @@ export type BouquetCountResponse = {
 // ── GET /api/v1/bouquet
 export type BouquetShelfItem = {
   bouquetId: number;
+  senderId?: number | null;
+  senderType?: BouquetSenderType;
+  receiverId?: number | null;
+  receiverType?: BouquetReceiverType;
+  displayName?: string;
   bouquetTypeId: number;
   bouquetName: string;
-  bouquetImageUrl: string;
-  createdAt: string;
+  bouquetDescription?: string;
+  bouquetImageUrl?: string | null;
+  myAnswered?: boolean;
+  counterpartAnswered?: boolean;
+  answerStatus?: BouquetAnswerStatus;
+  token?: string;
+  linkToken?: string;
+  createdAt?: string;
 };
 
 export type BouquetShelfResponse = {

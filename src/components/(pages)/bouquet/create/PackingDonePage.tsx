@@ -247,7 +247,12 @@ export default function PackingDonePage() {
   const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
 
   const { result } = useBouquetCreationResult();
-  const bouquetId = result?.bouquetId;
+  const bouquetIdFromQuery = Number(searchParams.get("bouquetId"));
+  const bouquetIdFromSearchParams =
+    Number.isInteger(bouquetIdFromQuery) && bouquetIdFromQuery > 0
+      ? bouquetIdFromQuery
+      : undefined;
+  const bouquetId = result?.bouquetId ?? bouquetIdFromSearchParams;
   const { data: shareUrl, isPending: isShareUrlPending } =
     useBouquetLinkUrlQuery(bouquetId);
 

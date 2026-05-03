@@ -147,7 +147,7 @@ export default function BouquetShelfPage() {
       if (answerStatus === "COMPLETED") {
         router.push(
           buildDonePageQuery(item, {
-            senderName: nickname || "보낸 사람",
+            senderName: displayName || nickname || "보낸 사람",
             receiverName: receiverName || displayName || "받는 사람",
             token,
             bouquetId: item.bouquetId,

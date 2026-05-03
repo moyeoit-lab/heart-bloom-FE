@@ -121,13 +121,19 @@ export default function BouquetShelfPage() {
 
     const token = getTokenFromItem(item);
     const displayName = item.displayName?.trim() || "";
+    const receiverName = item.receiverName?.trim() || "";
     const answerStatus = item.answerStatus;
 
     if (activeTab === "sent") {
       if (answerStatus === "WAITING_FOR_COUNTERPART_ANSWER") {
+        const displayName = item.displayName?.trim() || nickname || "보낸 사람";
+        const receiverName = item.receiverName?.trim() || "상대방";
         const query = new URLSearchParams({
-          nickname,
-          recipient: displayName || "상대방",
+          displayName,
+          receiverName,
+          // 기존 create 플로우와의 하위 호환을 위해 유지.
+          nickname: displayName,
+          recipient: receiverName,
         });
         const bouquetType = getBouquetVisualById(item.bouquetTypeId)?.key;
         if (bouquetType) {
@@ -142,7 +148,7 @@ export default function BouquetShelfPage() {
         router.push(
           buildDonePageQuery(item, {
             senderName: nickname || "보낸 사람",
-            receiverName: displayName || "받는 사람",
+            receiverName: receiverName || displayName || "받는 사람",
             token,
             bouquetId: item.bouquetId,
           }),
@@ -160,7 +166,7 @@ export default function BouquetShelfPage() {
       router.push(
         buildDonePageQuery(item, {
           senderName: displayName || "보낸 사람",
-          receiverName: nickname || "받는 사람",
+          receiverName: receiverName || nickname || "받는 사람",
           token,
           bouquetId: item.bouquetId,
         }),

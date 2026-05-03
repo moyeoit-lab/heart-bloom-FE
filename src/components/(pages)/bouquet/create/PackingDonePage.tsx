@@ -228,8 +228,14 @@ const FLOWER_CLICK_REGIONS: Record<BouquetTypeKey, FlowerClickRegion[]> = {
 export default function PackingDonePage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
-  const recipient = searchParams.get("recipient")?.trim() || DEFAULT_RECIPIENT;
+  const nickname =
+    searchParams.get("displayName")?.trim() ||
+    searchParams.get("nickname")?.trim() ||
+    DEFAULT_NICKNAME;
+  const recipient =
+    searchParams.get("receiverName")?.trim() ||
+    searchParams.get("recipient")?.trim() ||
+    DEFAULT_RECIPIENT;
   const rawType = searchParams.get("bouquetType")?.trim() ?? "";
   const bouquetTypeKey = VALID_BOUQUET_KEYS.has(rawType as BouquetTypeKey)
     ? (rawType as BouquetTypeKey)

@@ -46,6 +46,7 @@ export type BouquetShelfItem = {
   senderId?: number | null;
   senderType?: BouquetSenderType;
   receiverId?: number | null;
+  receiverName?: string | null;
   receiverType?: BouquetReceiverType;
   displayName?: string;
   bouquetTypeId: number;

@@ -9,13 +9,15 @@ import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
 
+const MAX_NICKNAME_LENGTH = 3;
+
 export default function CreateBouquetPage() {
   const router = useRouter();
   const [nickname, setNickname] = useState("");
   const isNicknameReady = nickname && nickname.length > 0;
 
   const updateNickname = (value: string) => {
-    setNickname(value);
+    setNickname(Array.from(value).slice(0, MAX_NICKNAME_LENGTH).join(""));
   };
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +62,7 @@ export default function CreateBouquetPage() {
               id="nickname"
               aria-label="보내는 사람 닉네임"
               type="text"
-              maxLength={6}
+              maxLength={MAX_NICKNAME_LENGTH}
               value={nickname}
               onChange={handleChange}
               placeholder="이름 혹은 별명을 입력해주세요."
@@ -74,7 +76,7 @@ export default function CreateBouquetPage() {
                   ? "text-[var(--color-brown-600)] placeholder:text-[var(--color-brown-600)]"
                   : "text-[var(--color-gray-900)] placeholder:text-[var(--color-gray-200)]"
               }
-              helperText="6자 이내"
+              helperText={`${MAX_NICKNAME_LENGTH}자 이내`}
             />
           </div>
         </div>

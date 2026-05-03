@@ -309,14 +309,14 @@ export default function PackingDonePage() {
         }
 
         const imageUrl = new URL(
-          "/images/home.png",
+          "/images/og-bouquet-share.png",
           window.location.origin,
         ).toString();
         kakao.Share.sendDefault({
           objectType: "feed",
           content: {
             title: `${nickname}님의 꽃다발`,
-            description: `${recipient}에게 꽃다발 링크를 공유해보세요.`,
+            description: `${nickname}님이 보낸 꽃다발이 도착했어요.`,
             imageUrl,
             link: {
               mobileWebUrl: shareTargetUrl,

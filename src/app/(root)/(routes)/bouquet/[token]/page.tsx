@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     siteName: "마음 꽃집",
     images: [
       {
-        url: "/images/home.png",
+        url: "/images/og-bouquet-share.png",
         width: 1200,
         height: 630,
         alt: SHARE_TITLE,
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: SHARE_TITLE,
     description: SHARE_DESCRIPTION,
-    images: ["/images/home.png"],
+    images: ["/images/og-bouquet-share.png"],
   },
 };
 

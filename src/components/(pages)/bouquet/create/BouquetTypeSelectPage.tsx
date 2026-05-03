@@ -155,12 +155,12 @@ export default function BouquetTypeSelectPage() {
                 aria-pressed={isSelected}
                 aria-label={card.name}
                 onClick={() => setSelectedIndex(index)}
-                className={`relative shrink-0 overflow-clip rounded-xl ${
+                className={`relative shrink-0 overflow-clip rounded-xl border ${
                   hasBuiltinCard ? "" : "bg-white"
                 } ${
                   isSelected
-                    ? "border border-[var(--color-green-400)] shadow-[0_0_12px_0_rgba(69,48,48,0.12)]"
-                    : ""
+                    ? "border-[var(--color-green-400)] shadow-[0_0_12px_0_rgba(69,48,48,0.12)]"
+                    : "border-[var(--color-gray-100)]"
                 }`}
                 style={{ width: THUMB_SIZE, height: THUMB_SIZE }}
               >

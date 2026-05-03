@@ -10,7 +10,7 @@ import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
 import { useBouquetByLinkQuery } from "@/features/bouquet";
 
-const MAX_NICKNAME_LENGTH = 10;
+const MAX_NICKNAME_LENGTH = 3;
 
 export default function ReceiverNicknamePage() {
   const router = useRouter();
@@ -66,10 +66,16 @@ export default function ReceiverNicknamePage() {
           <div className="px-5">
             <TextInput
               value={nickname}
-              onChange={(event) => setNickname(event.target.value)}
+              onChange={(event) =>
+                setNickname(
+                  Array.from(event.target.value)
+                    .slice(0, MAX_NICKNAME_LENGTH)
+                    .join(""),
+                )
+              }
               maxLength={MAX_NICKNAME_LENGTH}
               placeholder="이름을 입력해 주세요"
-              helperText="10자 이내"
+              helperText={`${MAX_NICKNAME_LENGTH}자 이내`}
               containerClassName="border-[var(--color-green-300)]"
             />
           </div>

@@ -13,7 +13,7 @@ export default function Footer({ className }: FooterProps) {
   return (
     <footer
       className={cn(
-        "absolute left-0 top-[791px] z-10 flex w-full flex-col gap-6 border-t border-[#e1e1e1] px-6 pb-12 pt-3",
+        "absolute left-0 top-[730px] z-10 flex w-full flex-col gap-6 border-t border-[#e1e1e1] px-6 pb-12 pt-3",
         className,
       )}
     >

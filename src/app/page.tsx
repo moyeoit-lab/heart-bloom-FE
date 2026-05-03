@@ -8,7 +8,7 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center bg-[var(--color-white)]">
       <section
-        className="relative h-[910px] w-full max-w-[430px] overflow-hidden bg-[#bcd9ec]"
+        className="relative h-[932px] w-full max-w-[430px] overflow-hidden bg-[#bcd9ec]"
         aria-label="로그인 가입 화면"
       >
         <Image
@@ -17,10 +17,10 @@ export default function Home() {
           fill
           priority
           sizes="430px"
-          className="h-[910px] w-full object-cover"
+          className="h-[932px] w-full object-cover object-[center_-46px]"
         />
 
-        <div className="absolute left-0 top-[82px] flex w-full flex-col items-center gap-6 px-5 text-center">
+        <div className="absolute left-0 top-[60px] flex w-full flex-col items-center gap-6 px-5 text-center">
           <p
             className="font-['KIMM'] text-[18px] font-light tracking-[-1px] text-[var(--color-red-400)]"
             style={{ lineHeight: "100%" }}

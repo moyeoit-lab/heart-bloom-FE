@@ -58,8 +58,8 @@ import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 
 const PAGE_WIDTH = 375;
 const SCENE_HEIGHT = 1023;
-// SVG에 박힌 모바일 status bar 영역(44px)을 페이지 밖으로 빼기 위한 보정값.
 const STATUS_BAR_OFFSET = 44;
+const PAGE_MIN_HEIGHT = 948;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
 
@@ -418,7 +418,7 @@ export default function ReceiverBouquetDonePage() {
   return (
     <main
       className="relative mx-auto overflow-hidden bg-[#fffadf]"
-      style={{ width: PAGE_WIDTH, minHeight: "100dvh" }}
+      style={{ width: PAGE_WIDTH, minHeight: PAGE_MIN_HEIGHT }}
     >
       {/* 꽃다발 SVG (배경) — status bar 영역만큼 위로 시프트해서 빈 공간 제거 */}
       <div

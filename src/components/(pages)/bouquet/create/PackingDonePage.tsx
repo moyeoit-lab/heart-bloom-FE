@@ -33,8 +33,8 @@ import {
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
-const PAGE_WIDTH = 375;
-const SCENE_HEIGHT = 812;
+const PAGE_WIDTH = 390;
+const SCENE_HEIGHT = 781;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_RECIPIENT = "상대방";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
@@ -446,7 +446,7 @@ export default function PackingDonePage() {
       className={`relative mx-auto flex min-h-dvh flex-col overflow-hidden ${visual.bgClass}`}
       style={{ width: PAGE_WIDTH }}
     >
-      {/* SVG 장면 + 클릭 영역은 고정 812 높이 컨테이너 안에 함께 — 좌표 일관성 */}
+      {/* SVG 장면 + 클릭 영역은 고정 SCENE_HEIGHT 높이 컨테이너 안에 함께 — 좌표 일관성 */}
       <div
         className="pointer-events-none absolute left-0 top-0 z-0"
         style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}

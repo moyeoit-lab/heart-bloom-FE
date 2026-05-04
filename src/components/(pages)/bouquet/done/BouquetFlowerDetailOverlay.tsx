@@ -16,7 +16,6 @@ const ICON_TOP = 81;
 const TITLE_TOP = 161;
 const SENDER_BLOCK_TOP = 209;
 const RECEIVER_BLOCK_TOP = 520;
-const TEXTAREA_ROWS = 8;
 
 // 모달 배경 그라디언트 — Figma 수신자 모달 노드 기준.
 const BG_BY_TYPE: Record<BouquetTypeKey, string> = {
@@ -120,8 +119,9 @@ export default function BouquetFlowerDetailOverlay({
           <TextArea
             value={senderAnswer}
             readOnly
-            rows={TEXTAREA_ROWS}
-            placeholder=""
+            autoSize
+            placeholder="답변이 없습니다"
+            className="placeholder:text-gray-300"
           />
         </section>
 
@@ -136,8 +136,9 @@ export default function BouquetFlowerDetailOverlay({
           <TextArea
             value={receiverAnswer}
             readOnly
-            rows={TEXTAREA_ROWS}
-            placeholder=""
+            autoSize
+            placeholder="답변이 없습니다"
+            className="placeholder:text-gray-300"
           />
         </section>
       </div>

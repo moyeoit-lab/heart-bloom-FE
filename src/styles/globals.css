@@ -3,13 +3,15 @@
 @import "./design-tokens.css";
 @import "./typography.css";
 
-html {
-  background: var(--color-white);
-}
+@layer base {
+  html {
+    background: var(--color-white);
+  }
 
-body {
-  font-family: var(--font-paperlogy);
-  color: var(--color-gray-900);
+  body {
+    font-family: var(--font-paperlogy);
+    color: var(--color-gray-900);
+  }
 }
 
 @utility pb-safe-bottom {

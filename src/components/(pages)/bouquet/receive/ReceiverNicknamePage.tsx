@@ -9,6 +9,7 @@ import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
 import { Button } from "@/components/Button";
 import { TextInput } from "@/components/TextInput";
 import { useBouquetByLinkQuery } from "@/features/bouquet";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const MAX_NICKNAME_LENGTH = 3;
 
@@ -17,6 +18,7 @@ export default function ReceiverNicknamePage() {
   const params = useParams<{ token: string }>();
   const token = params.token;
   const [nickname, setNickname] = useState("");
+  useBodyBackground("bg-[#fafafa]");
   const { data } = useBouquetByLinkQuery(token);
   const senderName = useMemo(
     () => data?.senderName?.trim() || "보낸 분",

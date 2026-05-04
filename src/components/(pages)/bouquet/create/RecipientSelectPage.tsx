@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 
 import chevronLeftIcon from "@/assets/icons/chevron-left-icon.svg";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const FAMILY_GROUPS = [
   { label: "부모님", chips: ["엄마", "아빠"] },
@@ -18,6 +19,7 @@ export default function RecipientSelectPage() {
   const searchParams = useSearchParams();
   const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
   const router = useRouter();
+  useBodyBackground("bg-[#fafafa]");
   const [selectedRecipient, setSelectedRecipient] = useState<string | null>(
     null,
   );

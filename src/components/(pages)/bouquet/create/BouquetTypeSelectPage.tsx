@@ -12,6 +12,7 @@ import {
   BOUQUET_VISUALS,
   type BouquetVisual,
 } from "@/shared/constants/bouquetVisuals";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 375;
 const HERO_CIRCLE_SIZE = 217;
@@ -57,6 +58,7 @@ export default function BouquetTypeSelectPage() {
   const searchParams = useSearchParams();
   const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
   const recipient = searchParams.get("recipient")?.trim() ?? "";
+  useBodyBackground("bg-[#fafafa]");
 
   const [selectedIndex, setSelectedIndex] = useState(DEFAULT_SELECTED_INDEX);
   const { data: types } = useBouquetTypesQuery();

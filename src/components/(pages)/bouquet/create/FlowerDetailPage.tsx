@@ -15,6 +15,7 @@ import {
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
 import { pickQuestionFlowerIcon } from "@/shared/constants/questionFlowerIcons";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
@@ -110,6 +111,9 @@ export default function FlowerDetailPage() {
     linkToken,
     question?.questionId,
   );
+  useBodyBackground(
+    bouquetTypeKey ? FLOWER_BG_BY_TYPE[bouquetTypeKey] : undefined,
+  );
 
   if (!isValid || !visual || !question || !bouquetTypeKey) return null;
 
@@ -164,7 +168,7 @@ export default function FlowerDetailPage() {
         <TextArea value={senderAnswer} readOnly autoSize placeholder="" />
       </section>
 
-      <section className="relative mt-6 flex flex-col gap-2 px-5 pb-10">
+      <section className="relative mt-1 flex flex-col gap-2 px-5 pb-10">
         <div
           className={
             isRecipientAnswered

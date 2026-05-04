@@ -18,6 +18,7 @@ import {
 } from "@/features/bouquet";
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
@@ -66,6 +67,7 @@ export default function QuestionStepPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const params = useParams<{ step: string }>();
+  useBodyBackground("bg-[#fafafa]");
 
   const stepRaw = Number(params?.step);
   const step = Number.isInteger(stepRaw) ? stepRaw : NaN;

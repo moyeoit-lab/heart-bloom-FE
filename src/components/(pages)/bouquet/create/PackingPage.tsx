@@ -5,8 +5,12 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import loadingSvg from "@/assets/images/packing/loading.svg";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
+const PAGE_HEIGHT = 739;
+const PAGE_MAX_HEIGHT = 1023;
+const PAGE_BG_CLASS = "bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]";
 const TRANSITION_DELAY_MS = 1500;
 const DOT_CYCLE_MS = 450;
 const DOT_COUNT = 3;
@@ -16,6 +20,7 @@ export default function PackingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nickname = searchParams.get("nickname")?.trim() || DEFAULT_NICKNAME;
+  useBodyBackground(PAGE_BG_CLASS);
   const [dotStep, setDotStep] = useState(0);
 
   useEffect(() => {
@@ -35,8 +40,12 @@ export default function PackingPage() {
 
   return (
     <main
-      className="mx-auto flex h-dvh flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
-      style={{ width: PAGE_WIDTH }}
+      className="mx-auto flex flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
+      style={{
+        width: PAGE_WIDTH,
+        minHeight: PAGE_HEIGHT,
+        maxHeight: PAGE_MAX_HEIGHT,
+      }}
     >
       <div className="flex flex-col items-center gap-4 px-5 pt-[148px]">
         <h1 className="typo-title-1 text-center">

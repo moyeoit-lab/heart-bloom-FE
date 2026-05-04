@@ -35,7 +35,7 @@ export default function PackingPage() {
 
   return (
     <main
-      className="mx-auto flex min-h-dvh flex-col items-center bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
+      className="mx-auto flex h-dvh flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
       style={{ width: PAGE_WIDTH }}
     >
       <div className="flex flex-col items-center gap-4 px-5 pt-[148px]">
@@ -64,13 +64,16 @@ export default function PackingPage() {
         </p>
       </div>
 
-      <Image
-        src={loadingSvg}
-        alt=""
-        aria-hidden
-        priority
-        className="mt-auto block h-auto w-full"
-      />
+      <div className="relative mt-auto min-h-0 w-full flex-1">
+        <Image
+          src={loadingSvg}
+          alt=""
+          aria-hidden
+          priority
+          fill
+          className="object-contain object-bottom"
+        />
+      </div>
     </main>
   );
 }

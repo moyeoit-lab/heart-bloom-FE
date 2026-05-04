@@ -24,6 +24,7 @@ import {
 } from "@/shared/constants/bouquetQuestions";
 import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 import type { BouquetTypeKey } from "@/features/bouquet";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 import { useSessionState } from "@/shared/hooks/useSessionState";
 import QuestionStepper from "@/components/(pages)/bouquet/create/QuestionStepper";
 
@@ -75,6 +76,7 @@ export default function ReceiverQuestionStepPage() {
   const token = params.token;
   const step = Number(params.step);
   const receiverName = searchParams.get("receiverName")?.trim() ?? "";
+  useBodyBackground("bg-[#fafafa]");
 
   const [answers, setAnswers] = useSessionState<ReceiverAnswers>(
     getAnswersStorageKey(token),

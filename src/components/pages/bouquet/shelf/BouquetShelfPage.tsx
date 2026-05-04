@@ -16,6 +16,7 @@ import { Button } from "@/components/Button";
 import { useBouquetShelfQuery } from "@/features/bouquet/queries";
 import type { BouquetShelfItem } from "@/features/bouquet/types";
 import { getBouquetVisualById } from "@/shared/constants/bouquetVisuals";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 type BouquetCard = {
   id: string;
@@ -102,6 +103,7 @@ const buildDonePageQuery = (
 export default function BouquetShelfPage() {
   const router = useRouter();
   const [activeTab, setActiveTab] = useState<"sent" | "received">("sent");
+  useBodyBackground("bg-[#fafafa]");
   const { data: bouquetShelfData } = useBouquetShelfQuery();
   const nickname = bouquetShelfData?.senderName?.trim() || "";
   const sentBouquets = bouquetShelfData?.sentBouquets ?? [];

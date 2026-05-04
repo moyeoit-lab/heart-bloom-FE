@@ -15,6 +15,7 @@ import {
 import { getQuestionByStep } from "@/shared/constants/bouquetQuestions";
 import { BOUQUET_VISUALS } from "@/shared/constants/bouquetVisuals";
 import { pickQuestionFlowerIcon } from "@/shared/constants/questionFlowerIcons";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
@@ -109,6 +110,9 @@ export default function FlowerDetailPage() {
   const { data: questionAnswers } = useBouquetQuestionAnswersQuery(
     linkToken,
     question?.questionId,
+  );
+  useBodyBackground(
+    bouquetTypeKey ? FLOWER_BG_BY_TYPE[bouquetTypeKey] : undefined,
   );
 
   if (!isValid || !visual || !question || !bouquetTypeKey) return null;

@@ -13,8 +13,8 @@ import { cn } from "@/shared/utils/cn";
 
 const DEFAULT_MAX_LENGTH = 2000;
 const DEFAULT_ROWS = 8;
-// autoSize 모드 최소 높이: 모바일에서 ~126자(약 6줄)가 한눈에 들어오는 크기.
-const AUTO_SIZE_MIN_HEIGHT = 180;
+const AUTO_SIZE_CHAR_THRESHOLD = 126;
+const AUTO_SIZE_FIXED_INNER_HEIGHT = 124;
 
 const textAreaVariants = cva(
   "flex w-full flex-col gap-3 rounded-[12px] border border-gray-100 bg-white p-3 transition-colors focus-within:border-green-400",
@@ -22,7 +22,7 @@ const textAreaVariants = cva(
 
 type TextAreaProps = ComponentProps<"textarea"> & {
   containerClassName?: string;
-  /** true일 때 min-height 180px에서 시작해 내용이 길어지면 scrollHeight만큼 자동 확장. */
+  /** true일 때 공백 포함 글자수 ≤126자면 외곽 박스 180px 고정, >126자면 scrollHeight만큼 자동 확장. */
   autoSize?: boolean;
 };
 
@@ -47,13 +47,17 @@ function TextArea({
     if (!autoSize) return;
     const el = textareaRef.current;
     if (!el) return;
+    if (length <= AUTO_SIZE_CHAR_THRESHOLD) {
+      el.style.height = `${AUTO_SIZE_FIXED_INNER_HEIGHT}px`;
+      return;
+    }
     el.style.height = "auto";
-    el.style.height = `${Math.max(AUTO_SIZE_MIN_HEIGHT, el.scrollHeight)}px`;
-  }, [autoSize]);
+    el.style.height = `${el.scrollHeight}px`;
+  }, [autoSize, length]);
 
   useEffect(() => {
     resizeToContent();
-  }, [resizeToContent, value, defaultValue]);
+  }, [resizeToContent]);
 
   return (
     <div className={cn(textAreaVariants(), containerClassName)}>
@@ -68,7 +72,7 @@ function TextArea({
         defaultValue={defaultValue}
         maxLength={maxLength}
         rows={autoSize ? undefined : rows}
-        style={autoSize ? { minHeight: AUTO_SIZE_MIN_HEIGHT } : undefined}
+        style={autoSize ? { height: AUTO_SIZE_FIXED_INNER_HEIGHT } : undefined}
         onChange={(e) => {
           if (typeof value !== "string") {
             setInternalLength(e.target.value.length);

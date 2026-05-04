@@ -55,8 +55,9 @@ import {
   getQuestions,
 } from "@/shared/constants/bouquetQuestions";
 import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
-const PAGE_WIDTH = 375;
+const PAGE_WIDTH = 390;
 const SCENE_HEIGHT = 1023;
 const STATUS_BAR_OFFSET = 44;
 const PAGE_MIN_HEIGHT = 948;
@@ -144,7 +145,7 @@ const pickHero = (
 const HEADER_TOP = 44 - STATUS_BAR_OFFSET;
 const TAG_TEXT = {
   left: 63.75,
-  top: 169 - STATUS_BAR_OFFSET,
+  top: 176 - STATUS_BAR_OFFSET,
   width: 80.983,
   height: 37.18,
 };
@@ -246,8 +247,6 @@ export default function ReceiverBouquetDonePage() {
   const receiverName =
     searchParams.get("receiverName")?.trim() || DEFAULT_NICKNAME;
 
-  // 다른 프엔이 만들 진입/답변 페이지에서 URL ?token=xxx 로 넘겨줄 예정.
-  // 토큰이 있으면 BE 응답으로 검증·hasOptional 도출, 없으면 placeholder 모드.
   const tokenFromQuery = searchParams.get("token")?.trim() || undefined;
   const bouquetIdFromQuery = Number(searchParams.get("bouquetId"));
   const bouquetId =
@@ -275,7 +274,6 @@ export default function ReceiverBouquetDonePage() {
   const bouquetTypeKey =
     bouquetTypeFromQuery ?? bouquetTypeFromName ?? DEFAULT_BOUQUET_KEY;
 
-  // BE 응답에 OPTIONAL answerType이 있으면 옵셔널 답변 존재. 토큰 없으면 URL 쿼리로 폴백.
   const hasOptional = receiverQuestions
     ? receiverQuestions.some((q) => q.answerType === "OPTIONAL")
     : searchParams.get("hasOptional") !== "false";
@@ -283,6 +281,7 @@ export default function ReceiverBouquetDonePage() {
   const [showMessages, setShowMessages] = useState(false);
   const [activeStep, setActiveStep] = useState<number | null>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  useBodyBackground("bg-[#fffadf]");
   const heroSrc = pickHero(bouquetTypeKey, hasOptional, showMessages);
   const downloadHeroSrc = pickHero(
     bouquetTypeKey,

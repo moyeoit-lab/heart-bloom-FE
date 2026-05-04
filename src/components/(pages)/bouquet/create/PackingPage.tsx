@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 
 import loadingSvg from "@/assets/images/packing/loading.svg";
 
-const PAGE_WIDTH = 375;
+const PAGE_WIDTH = 390;
 const TRANSITION_DELAY_MS = 1500;
 const DOT_CYCLE_MS = 450;
 const DOT_COUNT = 3;

@@ -164,7 +164,7 @@ export default function FlowerDetailPage() {
         <TextArea value={senderAnswer} readOnly autoSize placeholder="" />
       </section>
 
-      <section className="relative mt-6 flex flex-col gap-2 px-5 pb-10">
+      <section className="relative mt-1 flex flex-col gap-2 px-5 pb-10">
         <div
           className={
             isRecipientAnswered

@@ -15,7 +15,6 @@ const ICON_SIZE = 67;
 const ICON_TOP = 81;
 const TITLE_TOP = 161;
 const SENDER_BLOCK_TOP = 209;
-const RECEIVER_BLOCK_TOP = 520;
 
 // 모달 배경 그라디언트 — Figma 수신자 모달 노드 기준.
 const BG_BY_TYPE: Record<BouquetTypeKey, string> = {
@@ -109,38 +108,37 @@ export default function BouquetFlowerDetailOverlay({
           </h1>
         </div>
 
-        <section
-          className="absolute left-0 flex flex-col gap-2 p-5"
+        <div
+          className="absolute left-0 flex flex-col gap-1"
           style={{ top: SENDER_BLOCK_TOP, width: PAGE_WIDTH }}
         >
-          <p className="typo-body-3 whitespace-nowrap text-(--color-green-400)">
-            <span>To. 상대방</span>
-          </p>
-          <TextArea
-            value={senderAnswer}
-            readOnly
-            autoSize
-            placeholder="답변이 없습니다"
-            className="placeholder:text-gray-300"
-          />
-        </section>
+          <section className="flex flex-col gap-2 p-5">
+            <p className="typo-body-3 whitespace-nowrap text-(--color-green-400)">
+              <span>To. 상대방</span>
+            </p>
+            <TextArea
+              value={senderAnswer}
+              readOnly
+              autoSize
+              placeholder="답변이 없습니다"
+              className="placeholder:text-gray-300"
+            />
+          </section>
 
-        <section
-          className="absolute left-0 flex flex-col gap-2 p-5"
-          style={{ top: RECEIVER_BLOCK_TOP, width: PAGE_WIDTH }}
-        >
-          <p className="typo-body-3 whitespace-nowrap text-(--color-green-400)">
-            <span>To. </span>
-            <span>{receiverName}</span>
-          </p>
-          <TextArea
-            value={receiverAnswer}
-            readOnly
-            autoSize
-            placeholder="답변이 없습니다"
-            className="placeholder:text-gray-300"
-          />
-        </section>
+          <section className="flex flex-col gap-2 p-5">
+            <p className="typo-body-3 whitespace-nowrap text-(--color-green-400)">
+              <span>To. </span>
+              <span>{receiverName}</span>
+            </p>
+            <TextArea
+              value={receiverAnswer}
+              readOnly
+              autoSize
+              placeholder="답변이 없습니다"
+              className="placeholder:text-gray-300"
+            />
+          </section>
+        </div>
       </div>
     </div>
   );

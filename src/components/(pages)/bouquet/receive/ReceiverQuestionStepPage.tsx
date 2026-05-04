@@ -30,7 +30,6 @@ import QuestionStepper from "@/components/(pages)/bouquet/create/QuestionStepper
 const DEFAULT_ACCENT_COLOR = "var(--color-red-400)";
 const DEFAULT_NAME_COLOR = "var(--color-red-300)";
 
-const TEXTAREA_ROWS = 8;
 const PAGE_WIDTH = 375;
 
 type ReceiverAnswers = Record<number, string>;
@@ -330,7 +329,7 @@ export default function ReceiverQuestionStepPage() {
             onChange={(event) =>
               setAnswers((prev) => ({ ...prev, [step]: event.target.value }))
             }
-            rows={TEXTAREA_ROWS}
+            autoSize
             placeholder={
               isOptional
                 ? "자유롭게 작성해 주세요."

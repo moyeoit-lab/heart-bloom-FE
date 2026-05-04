@@ -24,7 +24,6 @@ import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResul
 import QuestionStepper from "./QuestionStepper";
 
 const PAGE_WIDTH = 375;
-const TEXTAREA_ROWS = 8;
 const TOTAL_STEPS = 5;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_RECIPIENT = "상대방";
@@ -254,7 +253,7 @@ export default function QuestionStepPage() {
                   ? "자유롭게 작성해 주세요."
                   : "작은 거여도 괜찮아요, 생각나는 대로 적어보세요."
               }
-              rows={TEXTAREA_ROWS}
+              autoSize
             />
             <p className="typo-body-3 text-[var(--color-gray-200)]">
               진심이 담긴 따뜻한 마음을 담아 꽃다발을 만들어 봐요.

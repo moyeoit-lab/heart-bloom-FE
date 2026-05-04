@@ -19,7 +19,6 @@ import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 375;
-const TEXTAREA_ROWS = 8;
 const ICON_SIZE = 67;
 const REQUIRED_STEPS = 4;
 const DEFAULT_NICKNAME = "이름";
@@ -165,7 +164,7 @@ export default function FlowerDetailPage() {
         <TextArea
           value={senderAnswer}
           readOnly
-          rows={TEXTAREA_ROWS}
+          autoSize
           placeholder=""
         />
       </section>
@@ -185,7 +184,7 @@ export default function FlowerDetailPage() {
           <TextArea
             value={recipientAnswer}
             readOnly
-            rows={TEXTAREA_ROWS}
+            autoSize
             placeholder=""
           />
         </div>

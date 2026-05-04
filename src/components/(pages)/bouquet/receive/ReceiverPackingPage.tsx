@@ -4,10 +4,10 @@ import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// TODO(asset): 수신자 완료 후 로딩 일러스트(피그마 16979:14937 흰 박스 꽃다발) 받으면 교체.
-import loadingSvg from "@/assets/images/packing/loading.svg";
+import loadingSvg from "@/assets/images/packing/loading-sender.svg";
 
-const PAGE_WIDTH = 375;
+const PAGE_WIDTH = 390;
+const PAGE_HEIGHT = 739;
 const TRANSITION_DELAY_MS = 1500;
 const DOT_CYCLE_MS = 450;
 const DOT_COUNT = 3;
@@ -39,8 +39,8 @@ export default function ReceiverPackingPage() {
 
   return (
     <main
-      className="mx-auto flex h-dvh flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
-      style={{ width: PAGE_WIDTH }}
+      className="mx-auto flex flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
+      style={{ width: PAGE_WIDTH, height: PAGE_HEIGHT }}
     >
       <div className="flex flex-col items-center gap-4 px-5 pt-[148px]">
         <h1 className="typo-title-1 text-center font-kimm tracking-[-2.257px]">

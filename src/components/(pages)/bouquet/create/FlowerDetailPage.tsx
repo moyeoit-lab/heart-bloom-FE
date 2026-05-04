@@ -18,7 +18,7 @@ import { pickQuestionFlowerIcon } from "@/shared/constants/questionFlowerIcons";
 import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
-const PAGE_WIDTH = 375;
+const PAGE_WIDTH = 390;
 const ICON_SIZE = 67;
 const REQUIRED_STEPS = 4;
 const DEFAULT_NICKNAME = "이름";

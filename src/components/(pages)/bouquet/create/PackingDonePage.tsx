@@ -31,6 +31,7 @@ import {
   type BouquetTypeKey,
 } from "@/features/bouquet";
 import { getQuestions } from "@/shared/constants/bouquetQuestions";
+import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 390;
@@ -244,6 +245,7 @@ export default function PackingDonePage() {
   const [showMessages, setShowMessages] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
   const visual = PACKING_DONE_VISUALS[bouquetTypeKey];
+  useBodyBackground(visual.bgClass);
   const heroSrc = showMessages ? visual.miniA : visual.miniQ;
   const downloadHero = DOWNLOAD_HERO_BY_TYPE[bouquetTypeKey];
   const downloadHeroSrc = showMessages ? downloadHero.on : downloadHero.off;

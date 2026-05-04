@@ -10,7 +10,7 @@ import {
 } from "@/features/bouquet";
 import { pickQuestionFlowerIcon } from "@/shared/constants/questionFlowerIcons";
 
-const PAGE_WIDTH = 375;
+const PAGE_WIDTH = 390;
 const ICON_SIZE = 67;
 const ICON_TOP = 81;
 const TITLE_TOP = 161;

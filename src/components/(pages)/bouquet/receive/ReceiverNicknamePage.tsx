@@ -74,8 +74,8 @@ export default function ReceiverNicknamePage() {
                 )
               }
               maxLength={MAX_NICKNAME_LENGTH}
-              placeholder="이름을 입력해 주세요"
-              helperText={`${MAX_NICKNAME_LENGTH}자 이내`}
+              placeholder="이름 혹은 별명을 입력해주세요"
+              helperText={`이름 혹은 ${MAX_NICKNAME_LENGTH}글자의 닉네임으로 설정해주세요!`}
               containerClassName="border-[var(--color-green-300)]"
             />
           </div>

@@ -65,7 +65,7 @@ export default function CreateBouquetPage() {
               maxLength={MAX_NICKNAME_LENGTH}
               value={nickname}
               onChange={handleChange}
-              placeholder="이름 혹은 별명을 입력해주세요."
+              placeholder="이름 혹은 별명을 입력해주세요 "
               containerClassName={`min-h-12 ${
                 isNicknameReady
                   ? "border-[var(--color-green-300)]"
@@ -76,7 +76,7 @@ export default function CreateBouquetPage() {
                   ? "text-[var(--color-brown-600)] placeholder:text-[var(--color-brown-600)]"
                   : "text-[var(--color-gray-900)] placeholder:text-[var(--color-gray-200)]"
               }
-              helperText={`${MAX_NICKNAME_LENGTH}자 이내`}
+              helperText={`이름 혹은 ${MAX_NICKNAME_LENGTH}글자의 닉네임으로 설정해주세요!`}
             />
           </div>
         </div>

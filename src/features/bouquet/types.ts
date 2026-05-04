@@ -171,7 +171,8 @@ export type BouquetLinkUrlResponse = {
 export type BouquetForReceiver = {
   senderName: string;
   bouquetName: string;
-  bouquetImageUrl: string;
+  bouquetImageUrl: string | null;
+  isCompleted?: boolean;
 };
 
 export type BouquetForReceiverResponse = {

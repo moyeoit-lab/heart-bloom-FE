@@ -17,11 +17,14 @@ export default function ReceiverEntryPage() {
   const token = params.token;
   const { data } = useBouquetByLinkQuery(token);
   const senderName = data?.senderName?.trim() || DEFAULT_SENDER_NAME;
-  const canParticipate = Boolean(token) && Boolean(data);
+  const isCompleted = Boolean(
+    (data as { isCompleted?: boolean } | undefined)?.isCompleted,
+  );
+  const canParticipate = Boolean(token) && Boolean(data) && !isCompleted;
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const handleParticipate = () => {
-    if (!token) {
+    if (!token || isCompleted) {
       return;
     }
     router.push(`/bouquet/${token}/nickname`);
@@ -80,11 +83,15 @@ export default function ReceiverEntryPage() {
 
           <div className="absolute left-0 top-[653px] w-full px-5">
             <Button
-              className="h-12 w-full"
+              className={`h-12 w-full ${
+                isCompleted
+                  ? "disabled:bg-[var(--color-gray-400)] disabled:text-white"
+                  : ""
+              }`}
               onClick={handleParticipate}
               disabled={!canParticipate}
             >
-              참여하기
+              {isCompleted ? "이미 답변을 완료했어요" : "참여하기"}
             </Button>
           </div>
 

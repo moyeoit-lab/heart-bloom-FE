@@ -23,15 +23,15 @@ export const metadata: Metadata = {
     icon: "/logo.svg",
   },
   openGraph: {
-    title: "마음 꽃집",
-    description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
+    title: "가정의 달, 마음꽃집에서 준비하세요!",
+    description: "서로의 속마음을 확인할 수 있는 꽃다발을 선물해 보세요.",
     url: "https://www.heart-blooming.site",
     siteName: "마음 꽃집",
     images: [
       {
         url: "/images/og-default.png",
-        width: 1200,
-        height: 630,
+        width: 800,
+        height: 400,
         alt: "마음 꽃집 — 따뜻한 가정의 달에만 열리는 마음 꽃집",
       },
     ],
@@ -40,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "마음 꽃집",
-    description: "따뜻한 가정의 달에만 열리는 마음 꽃집",
+    title: "가정의 달, 마음꽃집에서 준비하세요!",
+    description: "서로의 속마음을 확인할 수 있는 꽃다발을 선물해 보세요.",
     images: ["/images/og-default.png"],
   },
 };

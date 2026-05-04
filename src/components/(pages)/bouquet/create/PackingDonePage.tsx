@@ -315,8 +315,8 @@ export default function PackingDonePage() {
         kakao.Share.sendDefault({
           objectType: "feed",
           content: {
-            title: `${nickname}님의 꽃다발`,
-            description: `${nickname}님이 보낸 꽃다발이 도착했어요.`,
+            title: `${nickname}님이 마음 꽃다발을 만들어 선물했어요.`,
+            description: '마음을 담은 질문에 답하고, 꽃다발을 완성해 서로의 마음을 확인해볼까요?',
             imageUrl,
             link: {
               mobileWebUrl: shareTargetUrl,

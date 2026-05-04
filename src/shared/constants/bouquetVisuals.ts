@@ -19,6 +19,9 @@ export type BouquetVisual = {
   fallbackDescription: string;
   thumbnail: StaticImageData;
   hero: StaticImageData | null;
+  /** 꽃다발 종류 선택 화면 hero 영역에서 표시되는 꽃 크기. Figma 17378:3801 그룹 기준. */
+  heroWidth: number;
+  heroHeight: number;
   bgColor: string;
   accentColor: string;
 };
@@ -31,6 +34,8 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     fallbackDescription: "둘만 아는 소중한 순간의 질문이 나타나요",
     thumbnail: yellowTulipThumb,
     hero: yellowFlower,
+    heroWidth: 147.36,
+    heroHeight: 235.87,
     bgColor: "#FFFBDC",
     accentColor: "var(--color-point-yellow)",
   },
@@ -41,6 +46,8 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     fallbackDescription: "고마움과 따뜻한 마음의 질문이 나타나요",
     thumbnail: redCarnationThumb,
     hero: redFlower,
+    heroWidth: 182.26,
+    heroHeight: 257.15,
     bgColor: "#FCE5E5",
     accentColor: "var(--color-point-red)",
   },
@@ -51,6 +58,8 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     fallbackDescription: "미처 나누지 못했던 마음의 질문이 나타나요",
     thumbnail: blueLilyThumb,
     hero: blueFlower,
+    heroWidth: 176.92,
+    heroHeight: 258.01,
     bgColor: "#DDEFFE",
     accentColor: "var(--color-point-blue)",
   },
@@ -61,6 +70,8 @@ export const BOUQUET_VISUALS: BouquetVisual[] = [
     fallbackDescription: "몰랐던 서로의 마음의 질문이 나타나요",
     thumbnail: pinkGerberaThumb,
     hero: pinkFlower,
+    heroWidth: 175.58,
+    heroHeight: 251.62,
     bgColor: "#FCE5EE",
     accentColor: "var(--color-point-pink)",
   },

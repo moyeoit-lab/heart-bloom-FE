@@ -16,8 +16,8 @@ import {
 const PAGE_WIDTH = 375;
 const HERO_CIRCLE_SIZE = 217;
 const HERO_ROW_HEIGHT = 222;
-const HERO_FLOWER_HEIGHT = 218;
-const HERO_FLOWER_TOP_OFFSET = -11;
+// 모든 hero flower의 bottom이 컨테이너 bottom 아래로 빠져나오는 양 (Figma 17378:3801 4종 모두 ~11px 일관).
+const HERO_BOTTOM_OVERFLOW = 11;
 const THUMB_SIZE = 76;
 const DEFAULT_SELECTED_INDEX = 0;
 
@@ -121,11 +121,14 @@ export default function BouquetTypeSelectPage() {
               src={selected.visual.hero}
               alt=""
               priority
+              unoptimized
+              width={Math.round(selected.visual.heroWidth)}
+              height={Math.round(selected.visual.heroHeight)}
               className="absolute left-1/2 z-10 -translate-x-1/2"
               style={{
-                top: HERO_FLOWER_TOP_OFFSET,
-                height: HERO_FLOWER_HEIGHT,
-                width: "auto",
+                bottom: -HERO_BOTTOM_OVERFLOW,
+                width: selected.visual.heroWidth,
+                height: selected.visual.heroHeight,
               }}
             />
           ) : null}
@@ -155,12 +158,12 @@ export default function BouquetTypeSelectPage() {
                 aria-pressed={isSelected}
                 aria-label={card.name}
                 onClick={() => setSelectedIndex(index)}
-                className={`relative shrink-0 overflow-clip rounded-xl ${
+                className={`relative shrink-0 overflow-clip rounded-xl border ${
                   hasBuiltinCard ? "" : "bg-white"
                 } ${
                   isSelected
-                    ? "border border-[var(--color-green-400)] shadow-[0_0_12px_0_rgba(69,48,48,0.12)]"
-                    : ""
+                    ? "border-[var(--color-green-400)]"
+                    : "border-[var(--color-gray-100)]"
                 }`}
                 style={{ width: THUMB_SIZE, height: THUMB_SIZE }}
               >

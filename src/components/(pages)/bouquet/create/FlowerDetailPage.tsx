@@ -19,7 +19,6 @@ import { useBouquetAnswers } from "@/shared/hooks/useBouquetAnswers";
 import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResult";
 
 const PAGE_WIDTH = 375;
-const TEXTAREA_ROWS = 8;
 const ICON_SIZE = 67;
 const REQUIRED_STEPS = 4;
 const DEFAULT_NICKNAME = "이름";
@@ -162,12 +161,7 @@ export default function FlowerDetailPage() {
         <p className="typo-body-3 whitespace-nowrap text-[var(--color-green-400)]">
           <span>To. 상대방</span>
         </p>
-        <TextArea
-          value={senderAnswer}
-          readOnly
-          rows={TEXTAREA_ROWS}
-          placeholder=""
-        />
+        <TextArea value={senderAnswer} readOnly autoSize placeholder="" />
       </section>
 
       <section className="relative mt-6 flex flex-col gap-2 px-5 pb-10">
@@ -182,12 +176,7 @@ export default function FlowerDetailPage() {
             <span>To. </span>
             <span>{nickname}</span>
           </p>
-          <TextArea
-            value={recipientAnswer}
-            readOnly
-            rows={TEXTAREA_ROWS}
-            placeholder=""
-          />
+          <TextArea value={recipientAnswer} readOnly autoSize placeholder="" />
         </div>
         {isRecipientAnswered ? null : (
           <div className="pointer-events-none absolute inset-0 flex items-center justify-center px-5">

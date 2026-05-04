@@ -121,7 +121,8 @@ export default function BouquetFlowerDetailOverlay({
             value={senderAnswer}
             readOnly
             rows={TEXTAREA_ROWS}
-            placeholder=""
+            placeholder="답변이 없습니다"
+            className="placeholder:text-gray-300"
           />
         </section>
 
@@ -137,7 +138,8 @@ export default function BouquetFlowerDetailOverlay({
             value={receiverAnswer}
             readOnly
             rows={TEXTAREA_ROWS}
-            placeholder=""
+            placeholder="답변이 없습니다"
+            className="placeholder:text-gray-300"
           />
         </section>
       </div>

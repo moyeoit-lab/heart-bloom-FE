@@ -39,10 +39,8 @@ export default function ReceiverEntryPage() {
           aria-hidden
           priority
           fill
-          className="h-[910px] w-full object-cover"
+          className="h-[910px] w-full object-cover object-[center_-80px]"
         />
-
-        <div className="relative z-10 h-[44px]" aria-hidden />
 
         <section className="relative z-10 h-full">
           <div className="absolute left-0 top-[50px] flex w-full flex-col items-center gap-4 px-5 text-center">
@@ -75,13 +73,13 @@ export default function ReceiverEntryPage() {
             </button>
           </div>
 
-          <div className="absolute left-0 top-[585px] w-full px-[10px] text-center">
+          <div className="absolute left-0 top-[550px] w-full px-[10px] text-center">
             <p className="typo-body-1 whitespace-pre-line text-[var(--color-brown-300)]">
               마음을 담은 질문에 답하고,{"\n"}꽃다발을 완성해볼까요?
             </p>
           </div>
 
-          <div className="absolute left-0 top-[653px] w-full px-5">
+          <div className="absolute left-0 top-[610px] w-full px-5">
             <Button
               className={`h-12 w-full ${
                 isCompleted
@@ -95,7 +93,7 @@ export default function ReceiverEntryPage() {
             </Button>
           </div>
 
-          <Footer className="top-[730px] gap-3" />
+          <Footer className="top-[700px] gap-3" />
 
           {isGuideOpen ? (
             <div className="absolute inset-0 z-30 flex items-start justify-center px-5 pt-[240px]">

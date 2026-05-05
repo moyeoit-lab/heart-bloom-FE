@@ -58,7 +58,7 @@ export default function HomeActionSection({
   };
 
   return (
-    <div className="absolute left-0 top-[630px] flex w-full flex-col gap-2 px-5 pb-5">
+    <div className="absolute left-0 top-[590px] flex w-full flex-col gap-2 px-5 pb-5">
       <p className="flex justify-center gap-[2px] text-center">
         <span className="typo-body-2-1 text-[var(--color-brown-200)]">
           지금까지

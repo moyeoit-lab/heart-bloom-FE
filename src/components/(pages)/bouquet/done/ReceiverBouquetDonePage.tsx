@@ -58,11 +58,10 @@ import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
-const PAGE_HEIGHT = 980;
-const SCENE_HEIGHT = 1023;
+const PAGE_HEIGHT = 890;
+const SCENE_HEIGHT = 890;
 const STATUS_BAR_OFFSET = 44;
-// SVG hero를 위로 끌어올려 텍스트와 꽃 그림 사이 간격을 좁히는 보정값. 시안과 비교해서 조정.
-const SCENE_OFFSET_Y = -45;
+const SCENE_OFFSET_Y = 0;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
 
@@ -147,7 +146,7 @@ const pickHero = (
 const HEADER_TOP = 44 - STATUS_BAR_OFFSET;
 const TAG_TEXT = {
   left: 63.75,
-  top: 176 - STATUS_BAR_OFFSET,
+  top: 220 - STATUS_BAR_OFFSET,
   width: 80.983,
   height: 37.18,
 };

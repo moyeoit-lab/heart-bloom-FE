@@ -58,7 +58,7 @@ import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
-const PAGE_HEIGHT = 1102;
+const PAGE_HEIGHT = 980;
 const SCENE_HEIGHT = 1023;
 const STATUS_BAR_OFFSET = 44;
 // SVG hero를 위로 끌어올려 텍스트와 꽃 그림 사이 간격을 좁히는 보정값. 시안과 비교해서 조정.

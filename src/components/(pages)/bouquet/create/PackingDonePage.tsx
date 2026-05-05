@@ -36,6 +36,12 @@ import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResul
 
 const PAGE_WIDTH = 390;
 const SCENE_HEIGHT = 781;
+const SCENE_OFFSET_Y_BY_TYPE: Record<BouquetTypeKey, number> = {
+  YELLOW_TULIP: -60,
+  RED_CARNATION: -90,
+  BLUE_LILY: -40,
+  PINK_GERBERA: -90,
+};
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_RECIPIENT = "상대방";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
@@ -251,6 +257,7 @@ export default function PackingDonePage() {
   const downloadHeroSrc = showMessages ? downloadHero.on : downloadHero.off;
   const downloadNicknameColor = DOWNLOAD_NICKNAME_HEX_BY_TYPE[bouquetTypeKey];
   const flowerRegions = FLOWER_CLICK_REGIONS[bouquetTypeKey];
+  const sceneOffsetY = SCENE_OFFSET_Y_BY_TYPE[bouquetTypeKey];
   const questions = getQuestions(bouquetTypeKey);
   const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
 
@@ -451,8 +458,8 @@ export default function PackingDonePage() {
     >
       {/* SVG 장면 + 클릭 영역은 고정 SCENE_HEIGHT 높이 컨테이너 안에 함께 — 좌표 일관성 */}
       <div
-        className="pointer-events-none absolute left-0 top-0 z-0"
-        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+        className="pointer-events-none absolute left-0 z-0"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT, top: sceneOffsetY }}
       >
         <Image
           src={heroSrc}
@@ -466,8 +473,8 @@ export default function PackingDonePage() {
       </div>
 
       <div
-        className="absolute left-0 top-0 z-10"
-        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+        className="absolute left-0 z-10"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT, top: sceneOffsetY }}
       >
         {flowerRegions.map((region, index) => {
           const step = index + 1;

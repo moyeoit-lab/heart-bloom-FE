@@ -61,6 +61,8 @@ const PAGE_WIDTH = 390;
 const SCENE_HEIGHT = 1023;
 const STATUS_BAR_OFFSET = 44;
 const PAGE_MIN_HEIGHT = 948;
+// SVG hero를 위로 끌어올려 텍스트와 꽃 그림 사이 간격을 좁히는 보정값. 시안과 비교해서 조정.
+const SCENE_OFFSET_Y = -90;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
 
@@ -419,11 +421,11 @@ export default function ReceiverBouquetDonePage() {
       className="relative mx-auto overflow-hidden bg-[#fffadf]"
       style={{ width: PAGE_WIDTH, minHeight: PAGE_MIN_HEIGHT }}
     >
-      {/* 꽃다발 SVG (배경) — status bar 영역만큼 위로 시프트해서 빈 공간 제거 */}
+      {/* 꽃다발 SVG (배경) — 텍스트와 꽃 그림 사이 간격을 좁히기 위해 SCENE_OFFSET_Y만큼 위로 시프트 */}
       <div
         className="pointer-events-none absolute left-0 z-0"
         style={{
-          top: -STATUS_BAR_OFFSET,
+          top: SCENE_OFFSET_Y,
           width: PAGE_WIDTH,
           height: SCENE_HEIGHT,
         }}
@@ -449,7 +451,7 @@ export default function ReceiverBouquetDonePage() {
           className="absolute z-10 cursor-pointer bg-transparent"
           style={{
             left: spot.x,
-            top: spot.y - STATUS_BAR_OFFSET,
+            top: spot.y + SCENE_OFFSET_Y,
             width: spot.width,
             height: spot.height,
           }}
@@ -465,7 +467,7 @@ export default function ReceiverBouquetDonePage() {
           className="absolute z-10 cursor-pointer bg-transparent"
           style={{
             left: noteHotspot.x,
-            top: noteHotspot.y - STATUS_BAR_OFFSET,
+            top: noteHotspot.y + SCENE_OFFSET_Y,
             width: noteHotspot.width,
             height: noteHotspot.height,
           }}

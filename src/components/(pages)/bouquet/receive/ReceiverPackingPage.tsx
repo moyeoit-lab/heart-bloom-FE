@@ -8,8 +8,6 @@ import loadingSvg from "@/assets/images/packing/loading-sender.svg";
 import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
-const PAGE_HEIGHT = 739;
-const PAGE_MAX_HEIGHT = 1023;
 const PAGE_BG_CLASS = "bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]";
 const TRANSITION_DELAY_MS = 1500;
 const DOT_CYCLE_MS = 450;
@@ -43,12 +41,8 @@ export default function ReceiverPackingPage() {
 
   return (
     <main
-      className="relative mx-auto overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
-      style={{
-        width: PAGE_WIDTH,
-        minHeight: PAGE_HEIGHT,
-        maxHeight: PAGE_MAX_HEIGHT,
-      }}
+      className="relative mx-auto h-[100dvh] overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
+      style={{ width: PAGE_WIDTH }}
     >
       <Image
         src={loadingSvg}
@@ -63,7 +57,7 @@ export default function ReceiverPackingPage() {
       <div className="relative z-10 flex flex-col items-center gap-4 px-5 pt-[148px]">
         <h1 className="typo-title-1 text-center font-kimm tracking-[-2.257px]">
           <span className="text-[var(--color-red-300)]">{senderName}</span>
-          <span className="text-[var(--color-brown-300)]">,</span>
+          <span className="text-[var(--color-red-300)]">,</span>
           <span className="text-[var(--color-red-300)]">{receiverName}</span>
           <span className="text-[var(--color-brown-300)]">님의</span>
           <span className="block text-[var(--color-brown-300)]">꽃다발을</span>

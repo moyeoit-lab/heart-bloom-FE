@@ -58,11 +58,11 @@ import { getBouquetVisualByName } from "@/shared/constants/bouquetVisuals";
 import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
+const PAGE_HEIGHT = 890;
 const SCENE_HEIGHT = 1023;
 const STATUS_BAR_OFFSET = 44;
-const PAGE_MIN_HEIGHT = 948;
 // SVG hero를 위로 끌어올려 텍스트와 꽃 그림 사이 간격을 좁히는 보정값. 시안과 비교해서 조정.
-const SCENE_OFFSET_Y = -90;
+const SCENE_OFFSET_Y = -45;
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
 
@@ -151,8 +151,9 @@ const TAG_TEXT = {
   width: 80.983,
   height: 37.18,
 };
-const FOOTER_TEXT_TOP = 790 - STATUS_BAR_OFFSET;
-const ACTION_BUTTONS_TOP = 845 - STATUS_BAR_OFFSET;
+// 액션 버튼은 absolute bottom:0 부착, 푸터 텍스트는 그 위에 바로 붙여서 간격 제거.
+const ACTION_BUTTONS_HEIGHT = 88; // p-5(20*2) + button h-12(48)
+const FOOTER_TEXT_BOTTOM = ACTION_BUTTONS_HEIGHT;
 
 // 노트(쪽지) 클릭 시 사용하는 step 값.
 const NOTE_STEP = 5;
@@ -177,8 +178,8 @@ const FLOWER_HOTSPOTS_BY_TYPE: Partial<
   ],
   PINK_GERBERA: [
     { step: 1, x: 186, y: 292, width: 95.09, height: 76.72 },
-    { step: 2, x: 28.85, y: 437.32, width: 98.81, height: 89.64 },
-    { step: 3, x: 15.92, y: 253.85, width: 120, height: 120.44 },
+    { step: 2, x: 46.85, y: 480.32, width: 98.81, height: 89.64 },
+    { step: 3, x:   15.92, y: 253.85, width: 120, height: 120.44 },
     { step: 4, x: 126.34, y: 378.41, width: 128.11, height: 108.2 },
   ],
   RED_CARNATION: [
@@ -419,7 +420,11 @@ export default function ReceiverBouquetDonePage() {
   return (
     <main
       className="relative mx-auto overflow-hidden bg-[#fffadf]"
-      style={{ width: PAGE_WIDTH, minHeight: PAGE_MIN_HEIGHT }}
+      style={{
+        width: PAGE_WIDTH,
+        height: PAGE_HEIGHT,
+        maxHeight: "100dvh",
+      }}
     >
       {/* 꽃다발 SVG (배경) — 텍스트와 꽃 그림 사이 간격을 좁히기 위해 SCENE_OFFSET_Y만큼 위로 시프트 */}
       <div
@@ -539,7 +544,7 @@ export default function ReceiverBouquetDonePage() {
       <div
         className="absolute left-0 right-0 z-10 px-5 text-center"
         style={{
-          top: FOOTER_TEXT_TOP,
+          bottom: FOOTER_TEXT_BOTTOM,
           fontFamily: "var(--font-paperlogy)",
           fontSize: 16,
           lineHeight: "28px",
@@ -556,7 +561,7 @@ export default function ReceiverBouquetDonePage() {
       {/* 하단 액션 버튼 */}
       <div
         className="absolute left-0 right-0 z-20 flex gap-2 p-5"
-        style={{ top: ACTION_BUTTONS_TOP }}
+        style={{ bottom: 0 }}
       >
         <Button
           variant="outlined"

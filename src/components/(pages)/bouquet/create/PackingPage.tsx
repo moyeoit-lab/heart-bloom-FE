@@ -8,8 +8,6 @@ import loadingSvg from "@/assets/images/packing/loading.svg";
 import { useBodyBackground } from "@/shared/hooks/useBodyBackground";
 
 const PAGE_WIDTH = 390;
-const PAGE_HEIGHT = 739;
-const PAGE_MAX_HEIGHT = 1023;
 const PAGE_BG_CLASS = "bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]";
 const TRANSITION_DELAY_MS = 1500;
 const DOT_CYCLE_MS = 450;
@@ -40,15 +38,21 @@ export default function PackingPage() {
 
   return (
     <main
-      className="mx-auto flex flex-col items-center overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
-      style={{
-        width: PAGE_WIDTH,
-        minHeight: PAGE_HEIGHT,
-        maxHeight: PAGE_MAX_HEIGHT,
-      }}
+      className="relative mx-auto h-[100dvh] overflow-hidden bg-gradient-to-t from-[#fed8e1] to-[#f9f7de]"
+      style={{ width: PAGE_WIDTH }}
     >
-      <div className="flex flex-col items-center gap-4 px-5 pt-[148px]">
-        <h1 className="typo-title-1 text-center">
+      <Image
+        src={loadingSvg}
+        alt=""
+        aria-hidden
+        priority
+        fill
+        sizes={`${PAGE_WIDTH}px`}
+        className="absolute inset-0 z-0 object-contain object-bottom"
+      />
+
+      <div className="relative z-10 flex flex-col items-center gap-4 px-5 pt-[148px]">
+        <h1 className="typo-title-1 text-center font-kimm tracking-[-2.257px]">
           <span className="text-[var(--color-red-300)]">{nickname}</span>
           <span className="text-[var(--color-brown-300)]">님의</span>
           <span className="block text-[var(--color-brown-300)]">
@@ -71,17 +75,6 @@ export default function PackingPage() {
         <p className="typo-body-1 text-[var(--color-brown-300)]">
           마음을 담아 정성껏 만들고 있어요
         </p>
-      </div>
-
-      <div className="relative mt-auto min-h-0 w-full flex-1">
-        <Image
-          src={loadingSvg}
-          alt=""
-          aria-hidden
-          priority
-          fill
-          className="object-contain object-bottom"
-        />
       </div>
     </main>
   );

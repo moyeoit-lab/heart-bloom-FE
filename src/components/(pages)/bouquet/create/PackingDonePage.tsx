@@ -36,6 +36,12 @@ import { useBouquetCreationResult } from "@/shared/hooks/useBouquetCreationResul
 
 const PAGE_WIDTH = 390;
 const SCENE_HEIGHT = 781;
+const SCENE_OFFSET_Y_BY_TYPE: Record<BouquetTypeKey, number> = {
+  YELLOW_TULIP: -40,
+  RED_CARNATION: -60,
+  BLUE_LILY: -10,
+  PINK_GERBERA: -60,
+};
 const DEFAULT_NICKNAME = "이름";
 const DEFAULT_RECIPIENT = "상대방";
 const DEFAULT_BOUQUET_KEY: BouquetTypeKey = "YELLOW_TULIP";
@@ -251,6 +257,7 @@ export default function PackingDonePage() {
   const downloadHeroSrc = showMessages ? downloadHero.on : downloadHero.off;
   const downloadNicknameColor = DOWNLOAD_NICKNAME_HEX_BY_TYPE[bouquetTypeKey];
   const flowerRegions = FLOWER_CLICK_REGIONS[bouquetTypeKey];
+  const sceneOffsetY = SCENE_OFFSET_Y_BY_TYPE[bouquetTypeKey];
   const questions = getQuestions(bouquetTypeKey);
   const kakaoJsKey = process.env.NEXT_PUBLIC_KAKAO_JAVASCRIPT_KEY;
 
@@ -446,13 +453,13 @@ export default function PackingDonePage() {
 
   return (
     <main
-      className={`relative mx-auto flex min-h-dvh flex-col overflow-hidden ${visual.bgClass}`}
-      style={{ width: PAGE_WIDTH }}
+      className={`relative mx-auto flex flex-col overflow-hidden ${visual.bgClass}`}
+      style={{ width: PAGE_WIDTH, height: "100dvh" }}
     >
       {/* SVG 장면 + 클릭 영역은 고정 SCENE_HEIGHT 높이 컨테이너 안에 함께 — 좌표 일관성 */}
       <div
-        className="pointer-events-none absolute left-0 top-0 z-0"
-        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+        className="pointer-events-none absolute left-0 z-0"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT, top: sceneOffsetY }}
       >
         <Image
           src={heroSrc}
@@ -466,8 +473,8 @@ export default function PackingDonePage() {
       </div>
 
       <div
-        className="absolute left-0 top-0 z-10"
-        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT }}
+        className="absolute left-0 z-10"
+        style={{ width: PAGE_WIDTH, height: SCENE_HEIGHT, top: sceneOffsetY }}
       >
         {flowerRegions.map((region, index) => {
           const step = index + 1;
@@ -490,7 +497,7 @@ export default function PackingDonePage() {
         })}
       </div>
 
-      <header className="relative z-20 flex items-center justify-between p-4">
+      <header className="relative z-20 mb-5 flex items-center justify-between p-4">
         <Link href="/" aria-label="홈으로 돌아가기">
           <Image src={homeIcon} alt="" aria-hidden width={24} height={24} />
         </Link>
@@ -523,7 +530,7 @@ export default function PackingDonePage() {
         </div>
       </header>
 
-      <section className="relative z-20 flex flex-col items-center gap-4 px-5 pb-5">
+      <section className="relative z-20 flex flex-col items-center gap-5 px-5 pb-5">
         <h1 className="typo-title-2 text-center" style={{ lineHeight: "30px" }}>
           <span style={{ color: visual.nicknameColor }}>{nickname}</span>
           <span className="text-[var(--color-brown-300)]">
@@ -537,7 +544,10 @@ export default function PackingDonePage() {
         </p>
       </section>
 
-      <div className="relative z-20 mt-auto p-5">
+      <div
+        className="absolute left-0 right-0 z-20 p-5"
+        style={{ bottom: 0 }}
+      >
         <Button
           variant="solid"
           onClick={handleShare}
